@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -29,7 +30,7 @@ export function Navbar() {
     <nav
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
-          ? "bg-card/95 backdrop-blur-md shadow-md"
+          ? "bg-card/60 backdrop-blur-md shadow-md"
           : "bg-transparent"
       }`}
     >
@@ -37,11 +38,15 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">M</span>
-            </div>
+            <Image
+              src="/harborlogo.jpg"
+              alt="Harbor Logo"
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+/>
             <span className="text-lg font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-              Myanmar Student Center
+              The Harbor Student Center
             </span>
           </Link>
 

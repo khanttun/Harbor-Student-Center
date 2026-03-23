@@ -7,8 +7,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const slides = [
   {
-    src: "/images/hero-1.jpg",
-    alt: "Students sharing a meal together",
+    src: "/images/harborlogo.jpg",
+    alt: "The Harbor Student Center",
   },
   {
     src: "/images/hero-2.jpg",
