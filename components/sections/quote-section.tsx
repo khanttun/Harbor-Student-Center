@@ -10,7 +10,7 @@ export function QuoteSection() {
           <span className="absolute -bottom-10 -right-2 text-8xl text-primary/20 font-serif">&rdquo;</span>
         </blockquote>
         <p className="mt-8 text-muted-foreground">
-          — Katerina & Floyd Graham
+          — Katrina & Floyd Graham
         </p>
       </div>
     </section>

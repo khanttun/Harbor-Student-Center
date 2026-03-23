@@ -5,7 +5,7 @@ import { TimelineTreeSection } from "@/components/sections/timeline-tree-section
 import { MemoriesCtaSection } from "@/components/sections/memories-cta-section";
 
 export const metadata = {
-  title: "Memories | Myanmar Student Center",
+  title: "Memories | The Harbor Student Center",
   description: "Moments we've shared together - A collection of memories from our community gatherings and celebrations.",
 };
 

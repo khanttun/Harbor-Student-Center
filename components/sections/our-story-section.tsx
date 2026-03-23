@@ -25,7 +25,7 @@ export function OurStorySection() {
           </p>
           
           <p>
-            Today, the Myanmar Student Center is more than a place to eat. It&apos;s a 
+            Today, The Harbor Student Center is more than a place to eat. It&apos;s a 
             <span className="text-foreground font-medium"> home away from home</span>—a community 
             built on the belief that no one should have to navigate university life alone. Every 
             Saturday gathering, every celebration, every quiet conversation over rice and curry 

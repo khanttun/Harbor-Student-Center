@@ -111,7 +111,7 @@ export function ContactMethodsSection() {
                     <Facebook className="h-6 w-6" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">Katerina Trask Graham</h4>
+                    <h4 className="font-semibold text-foreground">Katrina Trask Graham</h4>
                     <p className="text-sm text-muted-foreground">Community Coordinator</p>
                   </div>
                   <Button
@@ -119,7 +119,7 @@ export function ContactMethodsSection() {
                     variant="outline"
                     className="rounded-full border-primary text-primary hover:bg-primary/10"
                   >
-                    <Link href="https://facebook.com/katerina.trask" target="_blank" rel="noopener noreferrer">
+                    <Link href="https://facebook.com/katrina.trask" target="_blank" rel="noopener noreferrer">
                       View Profile
                     </Link>
                   </Button>

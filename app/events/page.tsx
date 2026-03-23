@@ -7,7 +7,7 @@ import { AnnouncementsSection } from "@/components/sections/announcements-sectio
 import { EventsCtaSection } from "@/components/sections/events-cta-section";
 
 export const metadata = {
-  title: "Events & Schedule | Myanmar Student Center",
+  title: "Events & Schedule | The Harbor Student Center",
   description: "View our weekly schedule, special events, and announcements. Join us for meals, gatherings, and community activities.",
 };
 

@@ -9,8 +9,8 @@ import { MeaningSection } from "@/components/sections/meaning-section"
 import { AboutCtaSection } from "@/components/sections/about-cta-section"
 
 export const metadata = {
-  title: "About Us | Myanmar Student Center",
-  description: "Learn about the Myanmar Student Center at Mae Fah Luang University - our story, our values, and the people who make this community a home away from home.",
+  title: "About Us | The Harbor Student Center",
+  description: "Learn about The Harbor Student Center at Mae Fah Luang University - our story, our values, and the people who make this community a home away from home.",
 }
 
 export default function AboutPage() {

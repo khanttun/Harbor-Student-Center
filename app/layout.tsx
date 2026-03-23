@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Myanmar Student Center | Mae Fah Luang University',
+  title: 'The Harbor Student Center | Mae Fah Luang University',
   description: 'A home away from home for Myanmar students at Mae Fah Luang University. Free food, events, and a welcoming community.',
 }
 

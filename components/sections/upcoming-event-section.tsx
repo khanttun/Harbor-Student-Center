@@ -45,7 +45,7 @@ export function UpcomingEventSection() {
                 </div>
                 <div className="flex items-center gap-3 text-foreground">
                   <Clock className="h-5 w-5 text-primary" />
-                  <span>12:00 PM - 2:00 PM</span>
+                  <span>3:00 PM - 6:00 PM</span>
                 </div>
                 <div className="flex items-center gap-3 text-foreground">
                   <MapPin className="h-5 w-5 text-primary" />

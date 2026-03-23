@@ -18,7 +18,7 @@ export function MissionSection() {
         </h2>
         
         <p className="mb-8 text-lg leading-relaxed text-muted-foreground">
-          The Myanmar Student Center is a free, independent space created with love for Myanmar students 
+          The Harbor Student Center is a free, independent space created with love for Myanmar students 
           studying at Mae Fah Luang University. We are not affiliated with the university — we are simply 
           a community of people who want to give students a place to relax, eat, connect, and feel at home.
         </p>
@@ -31,7 +31,7 @@ export function MissionSection() {
             className="text-xl italic text-foreground sm:text-2xl"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
-            We do this because we love Myanmar people.
+            The Harbor: A secure and welcoming place where you can rest after a difficult journey.
           </p>
         </blockquote>
       </div>

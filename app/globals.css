@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Myanmar Student Center - Warm, Community-Driven Palette */
+  /* The Harbor Student Center - Warm, Community-Driven Palette */
   --background: #FFF7ED;
   --foreground: #1F2937;
   --card: #FFFFFF;
