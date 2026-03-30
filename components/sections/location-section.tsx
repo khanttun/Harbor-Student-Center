@@ -23,15 +23,7 @@ export function LocationSection() {
           {/* Map Placeholder */}
           <Card className="overflow-hidden border-0 shadow-lg">
             <div className="relative h-[400px] w-full bg-gradient-to-br from-primary/20 to-primary/10">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3750.3949359987526!2d100.2!3d20.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sHarbor%20Student%20Center!5e0!3m2!1sen!2sth!4v0000000000"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3747.989178894099!2d99.87032107473654!3d20.05089598136488!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30d7010023aebb41%3A0xf750d2847ec4fc0a!2sThe%20Harbor%20Student%20Center!5e0!3m2!1sen!2sus!4v1774436953467!5m2!1sen!2sus" width="600" height="450" style={{border: '0'}} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
             </div>
           </Card>
 
@@ -61,19 +53,13 @@ export function LocationSection() {
                 <div>
                   <h3 className="font-semibold text-foreground">Hours of Operation</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    <strong>Tuesday – Friday:</strong> Open for meals and activities<br />
+                    <strong>Tuesday – Thursday:</strong>Come Hangout, Play Games, Cook or Just Chill<br />
                     <strong>Saturday:</strong> Special meal gatherings<br />
                     <strong>Sunday – Monday:</strong> Closed
                   </p>
                 </div>
               </CardContent>
             </Card>
-
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <p className="text-sm text-foreground leading-relaxed">
-                💡 <strong>Pro Tip:</strong> We offer free food, a welcoming space to study, and a community ready to support you. Whether you're having a tough day or just want to connect, we're here for you.
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -11,7 +11,10 @@ export function ContactHeroSection() {
           src="/images/hero-1.jpg"
           alt="Students connecting together"
           fill
-          className="object-cover"
+          /* CHANGE: added 'object-top' to anchor the top of the photo. 
+             If it moves too far up, use 'object-[center_25%]' for a more subtle shift.
+          */
+          className="object-cover object-top-[center_15%]" 
           priority
         />
       </div>
