@@ -139,7 +139,7 @@ function MemoryCard({
       >
         {/* Branch line for desktop */}
         <div
-          className={`hidden md:block absolute top-1/2 w-16 h-0.5 bg-gradient-to-r ${
+          className={`hidden md:block absolute top-1/2 w-16 h-0.5 bg-linear-to-r ${
             side === "left"
               ? "right-1/2 from-transparent to-green-400"
               : "left-1/2 from-green-400 to-transparent"
@@ -242,11 +242,11 @@ export function TimelineTreeSection() {
       {/* Unique tree-inspired background */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Gradient sky to ground */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-50/50 via-background to-amber-50/30" />
+        <div className="absolute inset-0 bg-linear-to-b from-green-50/50 via-background to-amber-50/30" />
         
         {/* Subtle tree bark texture on sides */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-amber-100/40 to-transparent" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-amber-100/40 to-transparent" />
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-linear-to-r from-amber-100/40 to-transparent" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-amber-100/40 to-transparent" />
         
         {/* Floating leaves decoration */}
         <div className="absolute top-20 left-[10%] text-green-300/40 animate-pulse">
@@ -265,8 +265,7 @@ export function TimelineTreeSection() {
           <Leaf className="w-18 h-18 -rotate-45" />
         </div>
         <div className="absolute bottom-60 left-[15%] text-amber-200/30">
-          <Leaf className="w-10 h-10 rotate-[135deg]" />
-        </div>
+          <Leaf className="w-10 h-10 rotate-135" />
         
         {/* Tree silhouette decorations */}
         <div className="absolute bottom-0 left-[5%] text-green-200/20">
@@ -277,7 +276,7 @@ export function TimelineTreeSection() {
         </div>
         
         {/* Ground gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-amber-100/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-amber-100/50 to-transparent" />
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
@@ -289,14 +288,14 @@ export function TimelineTreeSection() {
 
         {/* Tree top decoration */}
         <div className="hidden md:flex justify-center mb-12">
-          <div className="bg-gradient-to-br from-green-400 to-green-500 rounded-full p-4 shadow-lg ring-4 ring-green-200/50">
+          <div className="bg-linear-to-br from-green-400 to-green-500 rounded-full p-4 shadow-lg ring-4 ring-green-200/50">
             <TreeDeciduous className="w-8 h-8 text-white" />
           </div>
         </div>
 
         {/* Mobile indicator */}
         <div className="md:hidden flex justify-center mb-8">
-          <div className="bg-gradient-to-br from-green-400 to-green-500 rounded-full p-3 shadow-lg">
+          <div className="bg-linear-to-br from-green-400 to-green-500 rounded-full p-3 shadow-lg">
             <TreeDeciduous className="w-6 h-6 text-white" />
           </div>
         </div>
@@ -321,9 +320,9 @@ export function TimelineTreeSection() {
         {/* Tree root decoration */}
         <div className="hidden md:flex justify-center mt-12">
           <div className="relative">
-            <div className="w-24 h-12 bg-gradient-to-t from-amber-700 via-amber-600 to-amber-500 rounded-b-full shadow-md" />
-            <div className="absolute -left-4 bottom-0 w-8 h-6 bg-gradient-to-tr from-amber-700 to-amber-600 rounded-bl-full" />
-            <div className="absolute -right-4 bottom-0 w-8 h-6 bg-gradient-to-tl from-amber-700 to-amber-600 rounded-br-full" />
+            <div className="w-24 h-12 bg-linear-to-t from-amber-700 via-amber-600 to-amber-500 rounded-b-full shadow-md" />
+            <div className="absolute -left-4 bottom-0 w-8 h-6 bg-linear-to-tr from-amber-700 to-amber-600 rounded-bl-full" />
+            <div className="absolute -right-4 bottom-0 w-8 h-6 bg-linear-to-tl from-amber-700 to-amber-600 rounded-br-full" />
           </div>
         </div>
       </div>

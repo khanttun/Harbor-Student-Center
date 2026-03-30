@@ -1,5 +1,3 @@
-'use client';
-
 "use client";
 import React, { useState } from 'react';
 import Link from "next/link";
@@ -32,7 +30,7 @@ const Sidebar = () => {
     <div
       className={`h-screen transition-all duration-300 flex flex-col border-r`
         + ` ${isCollapsed ? 'w-20' : 'w-64'}`
-        + ' bg-[var(--sidebar)] text-[var(--sidebar-foreground)] border-[var(--sidebar-border)]'}
+        + ' bg-sidebar text-sidebar-foreground border-sidebar-border'}
     >
       
       {/* Header / Logo */}
@@ -47,7 +45,7 @@ const Sidebar = () => {
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg bg-[var(--sidebar-accent)] hover:bg-[var(--sidebar-primary)] transition-colors"
+          className="p-1.5 rounded-lg bg-sidebar-accent hover:bg-sidebar-primary transition-colors"
         >
           {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -61,17 +59,17 @@ const Sidebar = () => {
             <Link
               key={index}
               href={item.href}
-              className={`relative flex items-center gap-4 px-3 py-3 rounded-lg transition-colors group font-[var(--font-heading)]`
+              className={`relative flex items-center gap-4 px-3 py-3 rounded-lg transition-colors group`
                 + (isActive
-                  ? ' bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)] shadow'
-                  : ' hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]')
+                  ? ' bg-sidebar-primary text-sidebar-primary-foreground shadow'
+                  : ' hover:bg-sidebar-accent hover:text-sidebar-accent-foreground')
               }
             >
               <div className="min-w-5">{item.icon}</div>
               {!isCollapsed && <span className="font-medium">{item.label}</span>}
               {/* Tooltip for collapsed state */}
               {isCollapsed && (
-                <div className="absolute left-20 bg-[var(--sidebar)] text-[var(--sidebar-foreground)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-[var(--sidebar-border)] shadow">
+                <div className="absolute left-20 bg-sidebar text-sidebar-foreground text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-sidebar-border shadow">
                   {item.label}
                 </div>
               )}
@@ -83,7 +81,7 @@ const Sidebar = () => {
       {/* Footer / Logout */}
       <div className="p-4 border-t border-[var(--sidebar-border)]">
         <button
-          className="flex items-center gap-4 px-3 py-3 w-full rounded-lg transition-colors group font-[var(--font-heading)] hover:bg-[var(--destructive)] hover:text-[var(--destructive-foreground)]"
+          className="flex items-center gap-4 px-3 py-3 w-full rounded-lg transition-colors group font-medium hover:bg-destructive hover:text-destructive-foreground"
         >
           <LogOut size={20} />
           {!isCollapsed && <span className="font-medium">Logout</span>}

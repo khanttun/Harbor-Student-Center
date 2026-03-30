@@ -4,7 +4,7 @@ import Image from "next/image"
 
 export function ContactHeroSection() {
   return (
-    <section className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
+    <section className="relative h-[50vh] min-h-100 w-full overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -20,7 +20,7 @@ export function ContactHeroSection() {
       </div>
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/50 to-black/60" />
 
       {/* Content */}
       <div className="relative flex h-full flex-col items-center justify-center px-4 text-center">

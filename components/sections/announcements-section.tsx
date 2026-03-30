@@ -46,11 +46,11 @@ export function AnnouncementsSection() {
                 </span>
               )}
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Bell className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-1 font-[family-name:var(--font-heading)]">
+                  <h3 className="text-lg font-semibold text-foreground mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
                     {announcement.title}
                   </h3>
                   <p className="text-muted-foreground">
