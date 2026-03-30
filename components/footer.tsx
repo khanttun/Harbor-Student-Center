@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { Heart, Facebook, MessageCircle } from "lucide-react"
 
@@ -29,10 +30,11 @@ export function Footer() {
           {/* Logo - Stacked Layout */}
           <Link href="/" onClick={handleLogoClick} className="flex flex-col items-center gap-4 text-center group">
             <div className="relative h-32 w-32 rounded-full overflow-hidden transition-transform group-hover:scale-105 shadow-xl">
-              <img 
-                src="/harborlogo.jpg" 
-                alt="The Harbor Student Center Logo" 
-                className="h-full w-full object-cover"
+              <Image
+                src="/harborlogo.jpg"
+                alt="The Harbor Student Center Logo"
+                fill
+                className="object-cover"
               />
             </div>
             <span className="text-xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>

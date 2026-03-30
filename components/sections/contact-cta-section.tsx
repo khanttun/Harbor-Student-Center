@@ -16,11 +16,11 @@ export function ContactCTASection() {
           className="mb-6 text-3xl font-bold text-white sm:text-4xl text-balance"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
-          Whether you're new or have been here for years, you are always welcome.
+          Whether you&apos;re new or have been here for years, you are always welcome.
         </h2>
-        
+
         <p className="mb-10 text-lg text-white/90 leading-relaxed max-w-2xl mx-auto">
-          Come by for a meal, join our community activities, or simply be part of a space where you belong. We can't wait to see you.
+          Come by for a meal, join our community activities, or simply be part of a space where you belong. We can&apos;t wait to see you.
         </p>
 
         <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">

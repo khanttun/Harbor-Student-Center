@@ -266,6 +266,7 @@ export function TimelineTreeSection() {
         </div>
         <div className="absolute bottom-60 left-[15%] text-amber-200/30">
           <Leaf className="w-10 h-10 rotate-135" />
+        </div>
         
         {/* Tree silhouette decorations */}
         <div className="absolute bottom-0 left-[5%] text-green-200/20">

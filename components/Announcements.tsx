@@ -47,7 +47,7 @@ export function Announcements() {
             </div>
             <p className="text-orange-800 dark:text-orange-200 text-sm">
               Join us this Saturday for a delicious feast featuring Pizza and Fried Rice!
-              Make sure you check your schedule and don't miss out on the incredible food.
+              Make sure you check your schedule and don&apos;t miss out on the incredible food.
             </p>
           </div>
 
