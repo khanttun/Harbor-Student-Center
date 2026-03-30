@@ -6,7 +6,7 @@ const features = [
   {
     icon: Calendar,
     title: "Weekly Hangout",
-    description: "Tuesday to Friday, our space is open for you to relax, cook, study, and spend quality time together with fellow students.",
+    description: "Tuesday to Thursday, our space is open for you to relax, cook, study, and spend quality time together with fellow students.",
   },
   {
     icon: UtensilsCrossed,

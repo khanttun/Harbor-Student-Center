@@ -29,7 +29,7 @@ export function UpcomingEventSection() {
               className="mb-6 text-3xl font-bold text-foreground sm:text-4xl text-balance"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
-              Saturday Lunch at Trios Mouth Restaurant
+              Saturday Lunch at TROIS MONTS Restaurant
             </h2>
             
             <p className="mb-8 text-lg text-muted-foreground leading-relaxed">
@@ -49,7 +49,7 @@ export function UpcomingEventSection() {
                 </div>
                 <div className="flex items-center gap-3 text-foreground">
                   <MapPin className="h-5 w-5 text-primary" />
-                  <span>Trios Mouth Restaurant, Chiang Rai</span>
+                  <span>TROIS MONTS Restaurant, Chiang Rai</span>
                 </div>
               </CardContent>
             </Card>

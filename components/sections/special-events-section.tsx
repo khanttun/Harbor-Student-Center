@@ -49,7 +49,7 @@ export function SpecialEventsSection() {
                   src={event.image}
                   alt={event.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className={`object-cover ${event.image === "/images/feast-event.jpg" ? "object-top" : "object-center"} group-hover:scale-105 transition-transform duration-500`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-4 left-4">
