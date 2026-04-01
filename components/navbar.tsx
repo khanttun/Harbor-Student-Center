@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, Lock } from "lucide-react" // Added Lock icon for a nice touch
+import { AnimatePresence, motion } from "framer-motion"
+import { Menu, X, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
@@ -13,6 +14,22 @@ const navLinks = [
   { href: "/memories", label: "Memories" },
   { href: "/contact", label: "Contact" },
 ]
+
+const navVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: { opacity: 1, y: 0 },
+}
+
+const mobileMenuVariants = {
+  hidden: { opacity: 0, scaleY: 0, originY: 0, height: 0 },
+  visible: { opacity: 1, scaleY: 1, originY: 0, height: "auto" },
+  exit: { opacity: 0, scaleY: 0, originY: 0, height: 0 },
+}
+
+const linkVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+}
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -27,11 +44,13 @@ export function Navbar() {
   }, [])
 
   return (
-    <nav
+    <motion.nav
+      variants={navVariants}
+      initial="hidden"
+      animate="visible"
+      transition={{ duration: 0.35 }}
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled
-          ? "bg-card/60 backdrop-blur-md shadow-md"
-          : "bg-transparent"
+        isScrolled ? "bg-card/70 backdrop-blur-xl shadow-md" : "bg-transparent"
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -45,24 +64,36 @@ export function Navbar() {
               height={40}
               className="rounded-full object-cover border border-border group-hover:scale-105 transition-transform"
             />
-            <span className="text-lg font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
+            <motion.span
+              className="text-lg font-bold text-foreground"
+              style={{ fontFamily: 'var(--font-heading)' }}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
               The Harbor
-            </span>
+            </motion.span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-2">
-            <div className="flex items-center gap-1 mr-4">
+            <motion.div
+              className="flex items-center gap-1 mr-4"
+              initial="hidden"
+              animate="visible"
+              transition={{ staggerChildren: 0.05, delayChildren: 0.05 }}
+            >
               {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                >
-                  {link.label}
-                </Link>
+                <motion.div key={link.href} variants={linkVariants}>
+                  <Link
+                    href={link.href}
+                    className="rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {/* --- ADMIN LOGIN BUTTON (DESKTOP) --- */}
             <Link href="/login">
@@ -93,33 +124,48 @@ export function Navbar() {
         </div>
 
         {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="border-t border-border pb-6 md:hidden animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="flex flex-col gap-1 pt-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="rounded-lg px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              
-              {/* --- ADMIN LOGIN BUTTON (MOBILE) --- */}
-              <div className="px-4 pt-4 border-t border-border mt-2">
-                <Link href="/login" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full gap-2 justify-center" variant="outline">
-                    <Lock className="h-4 w-4" />
-                    Admin Portal
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              key="mobile-menu"
+              variants={mobileMenuVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden border-t border-border pb-6 md:hidden"
+            >
+              <motion.div
+                className="flex flex-col gap-1 pt-4"
+                initial="hidden"
+                animate="visible"
+                transition={{ staggerChildren: 0.05, delayChildren: 0.05 }}
+              >
+                {navLinks.map((link) => (
+                  <motion.div key={link.href} variants={linkVariants}>
+                    <Link
+                      href={link.href}
+                      className="block rounded-2xl px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+
+                <motion.div variants={linkVariants} className="px-4 pt-4 border-t border-border mt-2">
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full gap-2 justify-center" variant="outline">
+                      <Lock className="h-4 w-4" />
+                      Admin Portal
+                    </Button>
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </nav>
+    </motion.nav>
   )
 }

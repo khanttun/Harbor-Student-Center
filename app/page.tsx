@@ -1,3 +1,4 @@
+'use client';
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { HeroSection } from "@/components/sections/hero-section"
@@ -10,7 +11,9 @@ import { Announcements } from "@/components/Announcements"
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+   <main
+      className="min-h-screen"
+    >
       <Navbar />
       <HeroSection />
       <MissionSection />
@@ -25,5 +28,5 @@ export default function HomePage() {
       <CTASection />
       <Footer />
     </main>
-  )
+  );
 }
