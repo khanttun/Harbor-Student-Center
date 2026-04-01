@@ -5,39 +5,39 @@
 
 :root {
   /* The Harbor Student Center - Warm, Community-Driven Palette */
-  --background: #FFF7ED;
+  --background: #e6fafd;
   --foreground: #1F2937;
-  --card: #FFFFFF;
+  --card: #ffffff;
   --card-foreground: #1F2937;
-  --popover: #FFFFFF;
+  --popover: #ffffff;
   --popover-foreground: #1F2937;
-  --primary: #F59E0B;
-  --primary-foreground: #FFFFFF;
-  --secondary: #B91C1C;
-  --secondary-foreground: #FFFFFF;
-  --muted: #FEF3E2;
-  --muted-foreground: #6B7280;
-  --accent: #86EFAC;
+  --primary: #0dc0e0;
+  --primary-foreground: #ffffff;
+  --secondary: #3fd6ee;
+  --secondary-foreground: #ffffff;
+  --muted: #f2fcfe;
+  --muted-foreground: #5e7a87;
+  --accent: #6be3f7;
   --accent-foreground: #1F2937;
   --destructive: #DC2626;
-  --destructive-foreground: #FFFFFF;
-  --border: #FED7AA;
-  --input: #FED7AA;
-  --ring: #F59E0B;
-  --chart-1: #F59E0B;
-  --chart-2: #B91C1C;
-  --chart-3: #86EFAC;
-  --chart-4: #FBBF24;
-  --chart-5: #EF4444;
+  --destructive-foreground: #ffffff;
+  --border: #3fd6ee;
+  --input: #b6f0fa;
+  --ring: #0dc0e0;
+  --chart-1: #0dc0e0;
+  --chart-2: #3fd6ee;
+  --chart-3: #6be3f7;
+  --chart-4: #b6f0fa;
+  --chart-5: #e6fafd;
   --radius: 1rem;
-  --sidebar: #FFF7ED;
+  --sidebar: #e6fafd;
   --sidebar-foreground: #1F2937;
-  --sidebar-primary: #F59E0B;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #FEF3E2;
+  --sidebar-primary: #0dc0e0;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #6be3f7;
   --sidebar-accent-foreground: #1F2937;
-  --sidebar-border: #FED7AA;
-  --sidebar-ring: #F59E0B;
+  --sidebar-border: #3fd6ee;
+  --sidebar-ring: #0dc0e0;
 }
 
 .dark {

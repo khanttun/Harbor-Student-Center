@@ -160,7 +160,7 @@ function MemoryCard({
           <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             {/* Single Image */}
             <div
-              className="relative aspect-[16/10] overflow-hidden cursor-pointer group"
+              className="relative aspect-16/10 overflow-hidden cursor-pointer group"
               onClick={() => setSelectedImage(memory.image)}
             >
               <Image
@@ -285,7 +285,7 @@ export function TimelineTreeSection() {
         <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} />
 
         {/* Tree trunk - vertical line */}
-        <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-32 bottom-0 w-1.5 bg-gradient-to-b from-green-300 via-green-400 to-amber-600 rounded-full shadow-sm" />
+        <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-32 bottom-0 w-1.5 bg-linear-to-b from-green-300 via-green-400 to-amber-600 rounded-full shadow-sm" />
 
         {/* Tree top decoration */}
         <div className="hidden md:flex justify-center mb-12">

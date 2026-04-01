@@ -25,7 +25,7 @@ export function ContactMethodsSection() {
         <div className="grid gap-8 lg:grid-cols-2 items-stretch">
           {/* Left Side: Messenger Group Card */}
           <Card className="group relative overflow-hidden border-0 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             <CardContent className="relative flex flex-1 flex-col gap-6 p-8">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
                 <MessageCircle className="h-7 w-7" />
@@ -53,7 +53,7 @@ export function ContactMethodsSection() {
 
           {/* Right Side: Merged Organizer Card with adjusted photo focus */}
           <Card className="group relative overflow-hidden border-0 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             
             {/* Unified Image Header */}
             <div className="relative h-56 w-full overflow-hidden">
@@ -64,7 +64,7 @@ export function ContactMethodsSection() {
                 className="object-cover object-[center_80%] transition-transform duration-700 group-hover:scale-105"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-4 left-6">
                 <h3 className="text-xl font-bold text-white">Our Coordinators</h3>
                 <p className="text-white/80 text-sm">Always here for you</p>

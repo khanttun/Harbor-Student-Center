@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+// Passcode answer (case-insensitive, can be changed as needed)
+const PET_NAME = "mocha";
 import { Heart, Send, CheckCircle2 } from "lucide-react";
 
 // You can override this URL via environment variables
@@ -12,38 +14,51 @@ export function ThankYouForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [showPasscode, setShowPasscode] = useState(false);
+  const [passcode, setPasscode] = useState("");
+  const [passcodeError, setPasscodeError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handles the actual note submission (after passcode is validated)
+  const doSubmit = async () => {
     setIsSubmitting(true);
     setError("");
     setIsSuccess(false);
-
     try {
-      // Replace with your actual endpoint
       const response = await fetch(`${API_URL}/api/thanks`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentName, message }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit your note");
-      }
-
+      if (!response.ok) throw new Error("Failed to submit your note");
       setIsSuccess(true);
       setStudentName("");
       setMessage("");
-      
-      // Auto-hide the success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
-      console.error("Error submitting note:", err);
       setError("Something went wrong. Please try again later.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Intercept submit to show passcode modal
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasscode("");
+    setPasscodeError("");
+    setShowPasscode(true);
+  };
+
+  // Passcode check and submit
+  const handlePasscodeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passcode.trim().toLowerCase() === PET_NAME) {
+      setShowPasscode(false);
+      setPasscode("");
+      setPasscodeError("");
+      doSubmit();
+    } else {
+      setPasscodeError("Incorrect. Please try again.");
     }
   };
 
@@ -109,6 +124,31 @@ export function ThankYouForm() {
             {isSubmitting ? "Sending..." : "Submit Note"}
             {!isSubmitting && <Send className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />}
           </button>
+          {/* Passcode Modal */}
+          {showPasscode && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-6 w-full max-w-xs border border-zinc-200 dark:border-zinc-800 relative">
+                <h3 className="text-lg font-bold mb-2">Community Passcode</h3>
+                <p className="text-sm mb-4">What is the name of Sayarma Katrina and Sayar Floyd's pet?</p>
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={passcode}
+                    onChange={e => setPasscode(e.target.value)}
+                    className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-rose-500 outline-none dark:bg-zinc-800"
+                    placeholder="Pet's name"
+                    autoFocus
+                    onKeyDown={e => { if (e.key === 'Enter') { handlePasscodeSubmit(e); } }}
+                  />
+                  {passcodeError && <p className="text-red-500 text-xs">{passcodeError}</p>}
+                  <div className="flex gap-2 justify-end">
+                    <button type="button" onClick={() => setShowPasscode(false)} className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200">Cancel</button>
+                    <button type="button" onClick={handlePasscodeSubmit} className="px-3 py-1 rounded bg-primary text-primary-foreground font-semibold">Submit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </section>

@@ -34,7 +34,7 @@ const Sidebar = () => {
     >
       
       {/* Header / Logo */}
-      <div className="flex items-center justify-between p-4 border-b border-[var(--sidebar-border)]">
+      <div className="flex items-center justify-between p-4 border-b border-(--sidebar-border)">
         {!isCollapsed && (
           <span
             className="font-bold text-xl tracking-tight"
@@ -79,7 +79,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Footer / Logout */}
-      <div className="p-4 border-t border-[var(--sidebar-border)]">
+      <div className="p-4 border-t border-(--sidebar-border)">
         <button
           className="flex items-center gap-4 px-3 py-3 w-full rounded-lg transition-colors group font-medium hover:bg-destructive hover:text-destructive-foreground"
         >
