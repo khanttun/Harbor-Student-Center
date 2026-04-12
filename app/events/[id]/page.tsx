@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Cake, CalendarDays, Drumstick, PartyPopper, Pizza } from "lucide-react";
+import { ArrowLeft, Cake, CalendarDays, Drumstick, Expand, PartyPopper, Pizza } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { createClient } from "@/lib/supabase/server";
+import { EventShareButton } from "@/components/event-share-button";
 
 type EventRecord = {
     id: string;
@@ -129,6 +130,22 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                             <p className="text-base leading-8 whitespace-pre-line text-muted-foreground">
                                 {event.description}
                             </p>
+
+                            <div className="flex flex-wrap items-center gap-3 mt-6">
+                                <EventShareButton title={event.title} />
+
+                                {event.image_url && (
+                                    <a
+                                        href={event.image_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors border rounded-lg border-border bg-background hover:bg-muted"
+                                    >
+                                        <Expand className="w-4 h-4" />
+                                        View full image
+                                    </a>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
