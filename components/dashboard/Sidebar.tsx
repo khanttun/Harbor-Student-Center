@@ -29,16 +29,16 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-full shrink-0 overflow-hidden transition-all duration-300 flex flex-col border-r`
+      className={`h-full shrink-0 overflow-hidden transition-all duration-300 flex flex-col`
         + ` ${isCollapsed ? 'w-20' : 'w-64'}`
-        + ' bg-sidebar text-sidebar-foreground border-sidebar-border'}
+        + ' bg-white text-sidebar-foreground'}
     >
 
       {/* Header / Logo */}
-      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+      <div className="flex items-center justify-between p-4 border-sidebar-border">
         {!isCollapsed && (
           <span
-            className="font-bold text-xl tracking-tight"
+            className="text-xl font-bold tracking-tight"
             style={{ color: 'var(--sidebar-primary)' }}
           >
             Harbor Admin
@@ -46,14 +46,14 @@ const Sidebar = () => {
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg bg-sidebar-accent hover:bg-sidebar-primary transition-colors"
+          className="p-1.5 rounded-lg cursor-pointer bg-sidebar-accent hover:bg-sidebar-primary transition-colors"
         >
           {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
         </button>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 mt-4 px-3 space-y-1">
+      <nav className="flex-1 px-3 mt-4 space-y-1">
         {menuItems.map((item, index) => {
           const isActive = pathname === item.href;
           return (
@@ -70,7 +70,7 @@ const Sidebar = () => {
               {!isCollapsed && <span className="font-medium">{item.label}</span>}
               {/* Tooltip for collapsed state */}
               {isCollapsed && (
-                <div className="absolute left-20 bg-sidebar text-sidebar-foreground text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-sidebar-border shadow">
+                <div className="absolute z-50 px-2 py-1 text-xs transition-opacity duration-300 border rounded shadow opacity-0 pointer-events-none left-20 bg-sidebar text-sidebar-foreground group-hover:opacity-100 group-hover:text-white whitespace-nowrap border-sidebar-border">
                   {item.label}
                 </div>
               )}
@@ -86,7 +86,7 @@ const Sidebar = () => {
             await supabase.auth.signOut();
             router.push('/login');
           }}
-          className="flex items-center gap-4 px-3 py-3 w-full rounded-lg transition-colors group font-medium hover:bg-destructive hover:text-destructive-foreground"
+          className="flex items-center w-full gap-4 px-3 py-3 font-medium transition-colors duration-300 rounded-lg cursor-pointer group hover:bg-destructive hover:text-destructive-foreground"
         >
           <LogOut size={20} />
           {!isCollapsed && <span className="font-medium">Logout</span>}
