@@ -1,8 +1,9 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Cake, Drumstick, Pizza, PartyPopper } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { createClient } from "@/lib/supabase/server";
+import { EventShareButton } from "../event-share-button";
+import Link from "next/link";
 
 type EventRecord = {
   id: string;
@@ -84,47 +85,54 @@ export async function UpcomingEventsSection() {
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {events.map((event) => (
-              (() => {
-                const category = getEventCategory(event);
-                const Icon = getCategoryIcon(category);
+            {events.map((event) => {
+              const category = getEventCategory(event);
+              const Icon = getCategoryIcon(category);
 
-                return (
-                  <Link
-                    key={event.id}
-                    href={`/events/${event.id}`}
-                    className="overflow-hidden transition-all duration-300 border shadow-sm group bg-card rounded-2xl border-border hover:shadow-lg"
-                  >
-                    {event.image_url && (
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                          src={event.image_url}
-                          alt={event.title}
-                          fill
-                          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+              return (
+                <article
+                  key={event.id}
+                  className="overflow-hidden transition-all duration-300 border shadow-sm group bg-card rounded-2xl border-border hover:shadow-lg"
+                >
+                  {event.image_url && (
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={event.image_url}
+                        alt={event.title}
+                        fill
+                        className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
 
-                        <div className="absolute inline-flex items-center gap-2 p-3 text-xs font-semibold text-white rounded-full shadow-sm bottom-3 left-3 bg-primary">
-                          <Icon className="w-4 h-4" />
-                        </div>
+                      <div className="absolute inline-flex items-center gap-2 p-3 text-xs font-semibold text-white rounded-full shadow-sm bottom-3 left-3 bg-primary">
+                        <Icon className="w-4 h-4" />
+                        {CATEGORY_LABELS[category]}
                       </div>
-                    )}
-                    <div className="flex flex-col justify-between flex-1 p-4">
-                      <div>
-                        <h3 className="mb-2 text-lg font-semibold text-foreground font-heading">
-                          {event.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-3">{event.description}</p>
-                      </div>
-                      <span className="inline-flex mt-4 text-sm font-semibold text-primary">
-                        View details
-                      </span>
                     </div>
-                  </Link>
-                );
-              })()
-            ))}
+                  )}
+
+                  <div className="flex flex-col justify-between flex-1 p-4">
+                    <div>
+                      <h3 className="mb-2 text-lg font-semibold text-foreground font-heading">
+                        {event.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-3">{event.description}</p>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+                      <Link
+                        href={`/events/${event.id}`}
+                        className="inline-flex text-sm font-semibold text-primary hover:underline"
+                      >
+                        View details
+                      </Link>
+
+                      <EventShareButton title={event.title} />
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </div>
