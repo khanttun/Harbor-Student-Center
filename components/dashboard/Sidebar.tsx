@@ -1,23 +1,24 @@
 "use client";
 import React, { useState } from 'react';
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Users, 
-  GraduationCap, 
-  Calendar, 
-  FileText, 
-  Settings, 
+import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  Calendar,
+  FileText,
+  Settings,
   LogOut,
   ChevronLeft,
   Menu
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-
   const pathname = usePathname();
+  const router = useRouter();
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', href: '/dashboard' },
     { icon: <Calendar size={20} />, label: 'Events', href: '/dashboard/events' },
@@ -32,7 +33,7 @@ const Sidebar = () => {
         + ` ${isCollapsed ? 'w-20' : 'w-64'}`
         + ' bg-sidebar text-sidebar-foreground border-sidebar-border'}
     >
-      
+
       {/* Header / Logo */}
       <div className="flex items-center justify-between p-4 border-b border-(--sidebar-border)">
         {!isCollapsed && (
@@ -78,9 +79,13 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Footer / Logout */}
-      <div className="p-4 border-t border-(--sidebar-border)">
+      <div className="p-4 border-t border-sidebar-border">
         <button
+          onClick={async () => {
+            const supabase = createClient();
+            await supabase.auth.signOut();
+            router.push('/login');
+          }}
           className="flex items-center gap-4 px-3 py-3 w-full rounded-lg transition-colors group font-medium hover:bg-destructive hover:text-destructive-foreground"
         >
           <LogOut size={20} />
