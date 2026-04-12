@@ -1,16 +1,16 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
   /* The Harbor Student Center - Warm, Community-Driven Palette */
   --background: #e6fafd;
-  --foreground: #1F2937;
+  --foreground: #1f2937;
   --card: #ffffff;
-  --card-foreground: #1F2937;
+  --card-foreground: #1f2937;
   --popover: #ffffff;
-  --popover-foreground: #1F2937;
+  --popover-foreground: #1f2937;
   --primary: #0dc0e0;
   --primary-foreground: #ffffff;
   --secondary: #3fd6ee;
@@ -18,8 +18,8 @@
   --muted: #f2fcfe;
   --muted-foreground: #5e7a87;
   --accent: #6be3f7;
-  --accent-foreground: #1F2937;
-  --destructive: #DC2626;
+  --accent-foreground: #1f2937;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --border: #3fd6ee;
   --input: #b6f0fa;
@@ -31,11 +31,11 @@
   --chart-5: #e6fafd;
   --radius: 1rem;
   --sidebar: #e6fafd;
-  --sidebar-foreground: #1F2937;
+  --sidebar-foreground: #1f2937;
   --sidebar-primary: #0dc0e0;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #6be3f7;
-  --sidebar-accent-foreground: #1F2937;
+  --sidebar-accent-foreground: #1f2937;
   --sidebar-border: #3fd6ee;
   --sidebar-ring: #0dc0e0;
 }
@@ -76,9 +76,9 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
-  --font-heading: var(--font-poppins), 'Poppins', system-ui, sans-serif;
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-heading: var(--font-poppins), "Poppins", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -137,4 +137,8 @@
 
 .animate-scroll {
   animation: scroll 30s linear infinite;
+}
+
+.timeline-tree-scroll {
+  -webkit-overflow-scrolling: touch;
 }

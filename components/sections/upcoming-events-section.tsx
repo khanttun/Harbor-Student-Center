@@ -104,7 +104,7 @@ export async function UpcomingEventsSection() {
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
 
-                      <div className="absolute inline-flex items-center gap-2 p-3 text-xs font-semibold text-white rounded-full shadow-sm bottom-3 left-3 bg-primary">
+                      <div className="absolute inline-flex items-center gap-2 p-2 text-xs font-semibold text-white rounded-full shadow-sm bottom-3 left-3 bg-primary">
                         <Icon className="w-4 h-4" />
                         {CATEGORY_LABELS[category]}
                       </div>
@@ -122,7 +122,7 @@ export async function UpcomingEventsSection() {
                     <div className="flex items-center justify-between mt-4">
                       <Link
                         href={`/events/${event.id}`}
-                        className="inline-flex text-sm font-semibold text-primary hover:underline"
+                        className="inline-flex text-sm font-semibold cursor-pointer text-primary hover:underline"
                       >
                         View details
                       </Link>

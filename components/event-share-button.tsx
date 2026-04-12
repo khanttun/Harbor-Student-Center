@@ -44,7 +44,7 @@ export function EventShareButton({ title }: EventShareButtonProps) {
         <button
             type="button"
             onClick={handleShare}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors border rounded-lg border-border bg-background hover:bg-muted"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors border rounded-lg cursor-pointer border-border bg-background hover:bg-muted"
         >
             <Share2 className="w-4 h-4" />
             {label}
