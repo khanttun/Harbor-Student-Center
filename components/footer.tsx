@@ -10,6 +10,7 @@ const navLinks = [
   { href: "/events", label: "Events" },
   { href: "/memories", label: "Memories" },
   { href: "/contact", label: "Contact" },
+  { href: "/login", label: "Admin Setting" },
 ]
 
 const socialLinks = [
@@ -24,12 +25,12 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="px-4 py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
-          
+
           {/* Logo - Stacked Layout */}
           <Link href="/" onClick={handleLogoClick} className="flex flex-col items-center gap-4 text-center group">
-            <div className="relative h-32 w-32 rounded-full overflow-hidden transition-transform group-hover:scale-105 shadow-xl">
+            <div className="relative w-32 h-32 overflow-hidden transition-transform rounded-full shadow-xl group-hover:scale-105">
               <Image
                 src="/harborlogo.jpg"
                 alt="The Harbor Student Center Logo"
@@ -37,7 +38,7 @@ export function Footer() {
                 className="object-cover"
               />
             </div>
-            <span className="text-xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            <span className="text-xl font-bold tracking-tight text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
               The Harbor Student Center
             </span>
           </Link>
@@ -48,7 +49,7 @@ export function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                className="text-sm font-medium transition-colors text-muted-foreground hover:text-primary"
               >
                 {link.label}
               </Link>
@@ -63,18 +64,18 @@ export function Footer() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="flex items-center justify-center w-10 h-10 transition-colors rounded-full bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
                 aria-label={link.label}
               >
-                <link.icon className="h-5 w-5" />
+                <link.icon className="w-5 h-5" />
               </a>
             ))}
           </div>
 
           {/* Bottom Section */}
-          <div className="flex flex-col items-center gap-2 border-t border-border/50 pt-8 w-full">
+          <div className="flex flex-col items-center w-full gap-2 pt-8 border-t border-border/50">
             <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              Made with <Heart className="h-4 w-4 fill-secondary text-secondary" /> for Myanmar students
+              Made with <Heart className="w-4 h-4 fill-secondary text-secondary" /> for Myanmar students
             </p>
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} The Harbor Student Center. All rights reserved.
