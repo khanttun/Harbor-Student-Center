@@ -8,25 +8,35 @@ import { UpcomingEventSection } from "@/components/sections/upcoming-event-secti
 import { MemoriesSection } from "@/components/sections/memories-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { Announcements } from "@/components/Announcements"
+import { motion } from "framer-motion"
 
 export default function HomePage() {
   return (
-   <main
-      className="min-h-screen"
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-background"
     >
       <Navbar />
       <HeroSection />
-      <MissionSection />
-      <WhatWeDoSection />
-      <UpcomingEventSection />
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <Announcements />
-        </div>
-      </section>
-      <MemoriesSection />
-      <CTASection />
+      
+      <div className="relative z-10 bg-background">
+        <MissionSection />
+        <WhatWeDoSection />
+        <UpcomingEventSection />
+        
+        <section className="py-20 sm:py-32 bg-background">
+          <div className="container mx-auto px-4 max-w-6xl">
+            <Announcements />
+          </div>
+        </section>
+        
+        <MemoriesSection />
+        <CTASection />
+      </div>
+      
       <Footer />
-    </main>
+    </motion.main>
   );
 }

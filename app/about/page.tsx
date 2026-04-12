@@ -1,3 +1,5 @@
+"use client";
+
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { AboutHeroSection } from "@/components/sections/about-hero-section"
@@ -7,24 +9,27 @@ import { ValuesSection } from "@/components/sections/values-section"
 import { QuoteSection } from "@/components/sections/quote-section"
 import { MeaningSection } from "@/components/sections/meaning-section"
 import { AboutCtaSection } from "@/components/sections/about-cta-section"
-
-export const metadata = {
-  title: "About Us | The Harbor Student Center",
-  description: "Learn about The Harbor Student Center at Mae Fah Luang University - our story, our values, and the people who make this community a home away from home.",
-}
+import { motion } from "framer-motion"
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <motion.main 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-background"
+    >
       <Navbar />
-      <AboutHeroSection />
-      <OurStorySection />
-      <PeopleSection />
-      <ValuesSection />
-      <QuoteSection />
-      <MeaningSection />
-      <AboutCtaSection />
+      <div className="relative z-10">
+        <AboutHeroSection />
+        <OurStorySection />
+        <PeopleSection />
+        <ValuesSection />
+        <QuoteSection />
+        <MeaningSection />
+        <AboutCtaSection />
+      </div>
       <Footer />
-    </main>
+    </motion.main>
   )
 }
