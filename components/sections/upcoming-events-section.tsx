@@ -106,7 +106,6 @@ export async function UpcomingEventsSection() {
 
                       <div className="absolute inline-flex items-center gap-2 p-2 text-xs font-semibold text-white rounded-full shadow-sm bottom-3 left-3 bg-primary">
                         <Icon className="w-4 h-4" />
-                        {CATEGORY_LABELS[category]}
                       </div>
                     </div>
                   )}
