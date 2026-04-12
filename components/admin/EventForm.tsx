@@ -9,11 +9,18 @@ type EventRecord = {
   date: string;
   description: string;
   image_url: string | null;
+  category: string | null;
   created_at: string;
 };
 
 const EVENT_IMAGE_BUCKET = "event-images";
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const EVENT_CATEGORIES = [
+  "Birthday Celebrations",
+  "Post-Exam Feast",
+  "Holiday Gatherings",
+  "Welcome Parties",
+] as const;
 
 function getUploadErrorMessage(errorMessage: string) {
   if (errorMessage.toLowerCase().includes("bucket not found")) {
@@ -50,6 +57,7 @@ export default function EventForm() {
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
+  const [category, setCategory] = useState<(typeof EVENT_CATEGORIES)[number]>("Birthday Celebrations");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -66,7 +74,7 @@ export default function EventForm() {
   async function loadEvents() {
     const { data, error } = await supabase
       .from("events")
-      .select("id,title,date,description,image_url,created_at")
+      .select("id,title,date,description,image_url,category,created_at")
       .order("date", { ascending: true });
 
     if (error) {
@@ -83,6 +91,7 @@ export default function EventForm() {
   function resetForm() {
     setTitle("");
     setDate("");
+    setCategory("Birthday Celebrations");
     setDescription("");
     setImage(null);
     setPreviewUrl(null);
@@ -146,7 +155,7 @@ export default function EventForm() {
     if (editingEventId) {
       const { error } = await supabase
         .from("events")
-        .update({ title, date, description, image_url: imageUrl })
+        .update({ title, date, category, description, image_url: imageUrl })
         .eq("id", editingEventId);
 
       if (error) {
@@ -159,7 +168,7 @@ export default function EventForm() {
     } else {
       const { error } = await supabase
         .from("events")
-        .insert([{ title, date, description, image_url: imageUrl }]);
+        .insert([{ title, date, category, description, image_url: imageUrl }]);
 
       if (error) {
         setMessage(getDatabaseErrorMessage("create", error.message));
@@ -177,6 +186,9 @@ export default function EventForm() {
     setEditingEventId(event.id);
     setTitle(event.title);
     setDate(event.date);
+    setCategory(event.category && EVENT_CATEGORIES.includes(event.category as (typeof EVENT_CATEGORIES)[number])
+      ? (event.category as (typeof EVENT_CATEGORIES)[number])
+      : "Birthday Celebrations");
     setDescription(event.description);
     setImage(null);
     setPreviewUrl(event.image_url);
@@ -221,6 +233,18 @@ export default function EventForm() {
         <div className="space-y-4">
           <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Event Title" className="w-full p-3 border rounded-lg outline-none bg-background focus:ring-2 focus:ring-primary" required />
           <input value={date} onChange={e => setDate(e.target.value)} type="date" className="w-full p-3 border rounded-lg outline-none bg-background focus:ring-2 focus:ring-primary" required />
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value as (typeof EVENT_CATEGORIES)[number])}
+            className="w-full p-3 border rounded-lg outline-none bg-background focus:ring-2 focus:ring-primary"
+            required
+          >
+            {EVENT_CATEGORIES.map((eventCategory) => (
+              <option key={eventCategory} value={eventCategory}>
+                {eventCategory}
+              </option>
+            ))}
+          </select>
           <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" className="w-full h-32 p-3 border rounded-lg outline-none bg-background focus:ring-2 focus:ring-primary" required />
         </div>
 
@@ -298,6 +322,7 @@ export default function EventForm() {
               <article key={event.id} className="flex flex-col gap-4 p-5 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-2">
                   <h3 className="text-base font-semibold">{event.title}</h3>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-primary">{event.category ?? "Uncategorized"}</p>
                   <p className="text-sm text-muted-foreground">{new Date(event.date).toLocaleDateString()}</p>
                   <p className="max-w-2xl text-sm leading-relaxed text-foreground/90">{event.description}</p>
                 </div>
