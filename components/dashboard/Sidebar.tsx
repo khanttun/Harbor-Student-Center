@@ -29,13 +29,13 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-screen transition-all duration-300 flex flex-col border-r`
+      className={`h-full shrink-0 overflow-hidden transition-all duration-300 flex flex-col border-r`
         + ` ${isCollapsed ? 'w-20' : 'w-64'}`
         + ' bg-sidebar text-sidebar-foreground border-sidebar-border'}
     >
 
       {/* Header / Logo */}
-      <div className="flex items-center justify-between p-4 border-b border-(--sidebar-border)">
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         {!isCollapsed && (
           <span
             className="font-bold text-xl tracking-tight"
