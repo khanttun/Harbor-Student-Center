@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 const slides = [
   {
@@ -36,44 +37,60 @@ export function HeroSection() {
   return (
     <section className="relative h-[80vh] min-h-[600px] w-full overflow-hidden">
       {/* Slideshow */}
-      {slides.map((slide, index) => (
-        <div
-          key={slide.src}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentSlide ? "opacity-100" : "opacity-0"
-          }`}
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={currentSlide}
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="absolute inset-0"
         >
           <Image
-            src={slide.src}
-            alt={slide.alt}
+            src={slides[currentSlide].src}
+            alt={slides[currentSlide].alt}
             fill
             className="object-cover"
-            priority={index === 0}
+            priority
           />
-        </div>
-      ))}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
 
       {/* Content */}
-      <div className="relative flex h-full flex-col items-center justify-center px-4 text-center">
-        <h1 
-          className="mb-6 text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-7xl text-balance"
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-6 text-3xl font-bold text-white sm:text-5xl md:text-6xl lg:text-7xl text-balance"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
           A Home Away From Home
-        </h1>
-        <p className="mb-8 max-w-2xl text-lg text-white/90 sm:text-xl md:text-2xl">
-          For Myanmar students at Mae Fah Luang University
-        </p>
-        <Button 
-          size="lg" 
-          className="rounded-full bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"
-          onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
+        </motion.h1>
+        <motion.p 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mb-8 max-w-2xl text-base text-white/90 sm:text-xl md:text-2xl"
         >
-          Join Our Community
-        </Button>
+          For Myanmar students at Mae Fah Luang University
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <Button 
+            size="lg" 
+            className="rounded-full bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"
+            onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Join Our Community
+          </Button>
+        </motion.div>
       </div>
 
       {/* Navigation Arrows */}

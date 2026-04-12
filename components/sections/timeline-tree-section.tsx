@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Leaf, TreeDeciduous } from "lucide-react";
 
 interface Memory {
@@ -90,117 +90,108 @@ const memoriesByYear: MemoriesByYear = {
   ],
 };
 
-const years = Object.keys(memoriesByYear).sort((a, b) => Number(b) - Number(a));
+type TimelineEntry = Memory & { year: string };
 
-function YearSelector({
-  selectedYear,
-  onSelectYear,
-}: {
-  selectedYear: string;
-  onSelectYear: (year: string) => void;
-}) {
-  return (
-    <div className="flex justify-center mb-12">
-      <div className="flex gap-2 p-1.5 bg-card rounded-full shadow-md border border-border overflow-x-auto max-w-full">
-        {years.map((year) => (
-          <button
-            key={year}
-            onClick={() => onSelectYear(year)}
-            className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 whitespace-nowrap ${
-              selectedYear === year
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-            }`}
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {year}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
+/** Shared column height: fits cards + trunk; horizontal scroll only on the strip. */
+const timelineColumnClass =
+  "h-[min(400px,calc(52svh-1.5rem))] min-h-0 max-h-[min(400px,calc(52svh-1.5rem))]";
 
-function MemoryCard({
+function TimelineMemoryNode({
   memory,
+  year,
   side,
 }: {
   memory: Memory;
-  side: "left" | "right";
+  year: string;
+  side: "above" | "below";
 }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const card = (
+    <div className="w-[min(100%,220px)] sm:w-[250px]">
+      <div className="rounded-xl border border-border bg-card shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
+        <button
+          type="button"
+          className="relative block aspect-16/10 w-full overflow-hidden text-left cursor-pointer group"
+          onClick={() => setSelectedImage(memory.image)}
+        >
+          <Image
+            src={memory.image}
+            alt={memory.title}
+            fill
+            className="object-cover object-top transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width:640px) 220px, 250px"
+          />
+          <span className="absolute top-1.5 left-1.5 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-sm">
+            {year}
+          </span>
+        </button>
+        <div className="px-3 py-2.5">
+          <p className="text-[11px] font-medium text-primary leading-tight">
+            {memory.date}
+          </p>
+          <h3
+            className="text-sm font-bold text-foreground mt-0.5 line-clamp-2 leading-snug"
+            style={{ fontFamily: "var(--font-heading)" }}
+          >
+            {memory.title}
+          </h3>
+          <p className="text-muted-foreground text-xs mt-0.5 line-clamp-2 leading-snug">
+            {memory.caption}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const node = (
+    <div
+      className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-green-400 to-green-600 shadow-md ring-2 ring-green-200/70"
+      aria-hidden
+    >
+      <Leaf className="h-4 w-4 text-white" />
+    </div>
+  );
 
   return (
     <>
       <div
-        className={`relative flex items-center ${
-          side === "left" ? "md:flex-row-reverse" : "md:flex-row"
-        } flex-col md:gap-8 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500`}
+        className={`grid w-[min(100%,252px)] shrink-0 snap-center px-1.5 sm:px-2 md:px-2.5 ${timelineColumnClass} ${
+          side === "below"
+            ? "grid-rows-[1fr_auto_auto]"
+            : "grid-rows-[auto_auto_1fr]"
+        }`}
       >
-        {/* Branch line for desktop */}
-        <div
-          className={`hidden md:block absolute top-1/2 w-16 h-0.5 bg-linear-to-r ${
-            side === "left"
-              ? "right-1/2 from-transparent to-green-400"
-              : "left-1/2 from-green-400 to-transparent"
-          }`}
-        />
-
-        {/* Leaf node */}
-        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-green-400 rounded-full items-center justify-center shadow-lg z-10">
-          <Leaf className="w-5 h-5 text-white" />
-        </div>
-
-        {/* Content card */}
-        <div
-          className={`w-full md:w-5/12 ${
-            side === "left" ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
-          }`}
-        >
-          <div className="bg-card rounded-2xl shadow-lg overflow-hidden border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            {/* Single Image */}
-            <div
-              className="relative aspect-16/10 overflow-hidden cursor-pointer group"
-              onClick={() => setSelectedImage(memory.image)}
-            >
-              <Image
-                src={memory.image}
-                alt={memory.title}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        {side === "below" ? (
+          <>
+            <div className="min-h-0" />
+            <div className="flex justify-center">{node}</div>
+            <div className="flex min-w-0 flex-col items-center justify-end gap-0 pb-1">
+              <div className="h-10 w-0.5 shrink-0 rounded-full bg-linear-to-b from-green-400 to-green-500" />
+              {card}
             </div>
-
-            {/* Content */}
-            <div className="p-5">
-              <span className="text-sm text-primary font-medium">
-                {memory.date}
-              </span>
-              <h3
-                className="text-xl font-bold text-foreground mt-1 mb-2"
-                style={{ fontFamily: "var(--font-heading)" }}
-              >
-                {memory.title}
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                {memory.caption}
-              </p>
+          </>
+        ) : (
+          <>
+            <div className="flex min-w-0 flex-col items-center justify-start gap-0 pt-1">
+              {card}
+              <div className="h-10 w-0.5 shrink-0 rounded-full bg-linear-to-t from-green-400 to-green-500" />
             </div>
-          </div>
-        </div>
-
-        {/* Empty space for the other side */}
-        <div className="hidden md:block w-5/12" />
+            <div className="flex justify-center">{node}</div>
+            <div className="min-h-0" />
+          </>
+        )}
       </div>
 
-      {/* Lightbox Modal */}
       {selectedImage && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-4xl max-h-[90vh] w-full">
+          <div
+            className="relative max-w-4xl max-h-[90vh] w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Image
               src={selectedImage}
               alt="Enlarged photo"
@@ -209,8 +200,12 @@ function MemoryCard({
               className="object-contain w-full h-full rounded-lg"
             />
             <button
+              type="button"
               className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
-              onClick={() => setSelectedImage(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(null);
+              }}
             >
               <svg
                 className="w-6 h-6"
@@ -234,99 +229,93 @@ function MemoryCard({
 }
 
 export function TimelineTreeSection() {
-  const [selectedYear, setSelectedYear] = useState(years[0]);
-  const memories = memoriesByYear[selectedYear] || [];
+  const timelineItems = useMemo(() => {
+    const entries: TimelineEntry[] = Object.entries(memoriesByYear)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .flatMap(([year, memories]) =>
+        memories.map((m) => ({ ...m, year })),
+      );
+    return entries;
+  }, []);
 
   return (
-    <section className="py-20 px-4 relative overflow-hidden">
-      {/* Unique tree-inspired background */}
+    <section className="py-10 md:py-12 px-0 sm:px-4 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        {/* Gradient sky to ground */}
         <div className="absolute inset-0 bg-linear-to-b from-green-50/50 via-background to-amber-50/30" />
-        
-        {/* Subtle tree bark texture on sides */}
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-linear-to-r from-amber-100/40 to-transparent" />
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-linear-to-l from-amber-100/40 to-transparent" />
-        
-        {/* Floating leaves decoration */}
-        <div className="absolute top-20 left-[10%] text-green-300/40 animate-pulse">
-          <Leaf className="w-20 h-20 rotate-45" />
+        <div className="absolute top-24 left-[8%] text-green-300/35">
+          <Leaf className="w-16 h-16 rotate-45" />
         </div>
-        <div className="absolute top-40 right-[15%] text-green-200/30 animate-pulse" style={{ animationDelay: "1s" }}>
-          <Leaf className="w-16 h-16 -rotate-12" />
+        <div className="absolute bottom-32 right-[10%] text-green-200/25">
+          <TreeDeciduous className="w-28 h-28" />
         </div>
-        <div className="absolute top-[60%] left-[8%] text-green-300/25 animate-pulse" style={{ animationDelay: "0.5s" }}>
-          <Leaf className="w-14 h-14 rotate-90" />
-        </div>
-        <div className="absolute top-[30%] right-[8%] text-green-200/35 animate-pulse" style={{ animationDelay: "1.5s" }}>
-          <Leaf className="w-12 h-12 rotate-180" />
-        </div>
-        <div className="absolute bottom-40 right-[12%] text-green-300/30 animate-pulse" style={{ animationDelay: "2s" }}>
-          <Leaf className="w-18 h-18 -rotate-45" />
-        </div>
-        <div className="absolute bottom-60 left-[15%] text-amber-200/30">
-          <Leaf className="w-10 h-10 rotate-135" />
-        </div>
-        
-        {/* Tree silhouette decorations */}
-        <div className="absolute bottom-0 left-[5%] text-green-200/20">
-          <TreeDeciduous className="w-32 h-32" />
-        </div>
-        <div className="absolute bottom-0 right-[5%] text-green-200/15">
-          <TreeDeciduous className="w-40 h-40" />
-        </div>
-        
-        {/* Ground gradient */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-amber-100/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-amber-100/40 to-transparent" />
       </div>
 
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Year Selector */}
-        <YearSelector selectedYear={selectedYear} onSelectYear={setSelectedYear} />
+      {timelineItems.length > 0 ? (
+        <div
+          className="timeline-tree-scroll relative z-10 w-full overflow-x-auto overflow-y-hidden overscroll-x-contain overscroll-y-none scroll-smooth pb-2 snap-x snap-proximity [-ms-overflow-style:auto] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          tabIndex={0}
+          role="region"
+          aria-label="Memories timeline"
+        >
+          <div className="relative mx-auto min-w-max px-4 sm:px-8 md:px-12 py-3 md:py-4">
+            <div
+              className="pointer-events-none absolute left-4 right-4 sm:left-8 sm:right-8 md:left-12 md:right-12 top-1/2 h-1 -translate-y-1/2 rounded-full bg-linear-to-r from-amber-600 via-green-500 to-green-400 shadow-sm"
+              aria-hidden
+            />
+            <div
+              className={`relative flex flex-row items-stretch justify-start gap-0 md:gap-0.5 ${timelineColumnClass}`}
+            >
+              <div
+                className={`flex shrink-0 flex-col items-center justify-center gap-1 pr-2 sm:pr-3 ${timelineColumnClass}`}
+              >
+                <div className="rounded-full bg-linear-to-br from-green-500 to-green-700 p-2.5 shadow-md ring-2 ring-green-200/50">
+                  <TreeDeciduous className="h-6 w-6 text-white" />
+                </div>
+                <span
+                  className="max-w-[4.5rem] text-center text-[10px] font-semibold text-muted-foreground sm:text-xs"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Start
+                </span>
+              </div>
 
-        {/* Tree trunk - vertical line */}
-        <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-32 bottom-0 w-1.5 bg-linear-to-b from-green-300 via-green-400 to-amber-600 rounded-full shadow-sm" />
+              {timelineItems.map((memory, index) => (
+                <TimelineMemoryNode
+                  key={memory.id}
+                  memory={memory}
+                  year={memory.year}
+                  side={index % 2 === 0 ? "below" : "above"}
+                />
+              ))}
 
-        {/* Tree top decoration */}
-        <div className="hidden md:flex justify-center mb-12">
-          <div className="bg-linear-to-br from-green-400 to-green-500 rounded-full p-4 shadow-lg ring-4 ring-green-200/50">
-            <TreeDeciduous className="w-8 h-8 text-white" />
-          </div>
-        </div>
-
-        {/* Mobile indicator */}
-        <div className="md:hidden flex justify-center mb-8">
-          <div className="bg-linear-to-br from-green-400 to-green-500 rounded-full p-3 shadow-lg">
-            <TreeDeciduous className="w-6 h-6 text-white" />
-          </div>
-        </div>
-
-        {/* Memory cards */}
-        <div className="space-y-12 md:space-y-16" key={selectedYear}>
-          {memories.length > 0 ? (
-            memories.map((memory, index) => (
-              <MemoryCard
-                key={memory.id}
-                memory={memory}
-                side={index % 2 === 0 ? "left" : "right"}
-              />
-            ))
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground text-lg">No memories yet for {selectedYear}</p>
+              <div
+                className={`flex shrink-0 flex-col items-center justify-center gap-1 pl-2 sm:pl-3 ${timelineColumnClass}`}
+              >
+                <div className="h-9 w-9 rounded-full border-2 border-dashed border-green-400/80 bg-background/80" />
+                <span
+                  className="max-w-[4.5rem] text-center text-[10px] font-semibold text-muted-foreground sm:text-xs"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Today
+                </span>
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* Tree root decoration */}
-        <div className="hidden md:flex justify-center mt-12">
-          <div className="relative">
-            <div className="w-24 h-12 bg-linear-to-t from-amber-700 via-amber-600 to-amber-500 rounded-b-full shadow-md" />
-            <div className="absolute -left-4 bottom-0 w-8 h-6 bg-linear-to-tr from-amber-700 to-amber-600 rounded-bl-full" />
-            <div className="absolute -right-4 bottom-0 w-8 h-6 bg-linear-to-tl from-amber-700 to-amber-600 rounded-br-full" />
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="relative z-10 text-center py-16 px-4">
+          <p className="text-muted-foreground text-lg">No memories yet.</p>
+        </div>
+      )}
+
+      <style jsx global>{`
+        .timeline-tree-scroll {
+          -webkit-overflow-scrolling: touch;
+        }
+      `}</style>
     </section>
   );
 }
