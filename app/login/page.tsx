@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,6 +25,20 @@ export default function AdminLoginPage() {
       setError(authError.message);
       setLoading(false);
     } else {
+      const trimmedDisplayName = displayName.trim();
+
+      if (trimmedDisplayName) {
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { display_name: trimmedDisplayName },
+        });
+
+        if (updateError) {
+          setError(updateError.message);
+          setLoading(false);
+          return;
+        }
+      }
+
       router.push("/dashboard");
       router.refresh();
     }
@@ -55,6 +70,13 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Display Name (optional)"
+            value={displayName}
+            onChange={e => setDisplayName(e.target.value)}
+            className="p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+          />
           <input
             type="email"
             placeholder="Email"
