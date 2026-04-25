@@ -75,14 +75,14 @@ export function Footer() {
           {/* Bottom Section */}
           <div className="flex flex-col items-center w-full gap-2 pt-8 border-t border-border/50">
             <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              Made with <Heart className="w-4 h-4 fill-secondary text-secondary" /> for Myanmar students
+              Made with <Heart className="w-4 h-4 fill-secondary text-secondary" /> by <Link href="https://khantportfolio.vercel.app/" target="_blank"><span className="font-bold text-primary">Kent</span></Link> & <Link href="https://khantnyarkoko.vercel.app/" target="_blank"><span className="font-bold text-primary">Ko Ko</span></Link> for Myanmar students
             </p>
             <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} The Harbor Student Center. All rights reserved.
             </p>
           </div>
         </div>
-      </div>
-    </footer>
+      </div >
+    </footer >
   )
 }
