@@ -168,7 +168,7 @@ export async function TimelineTreeSection() {
 
       {timelineItems.length > 0 ? (
         <div
-          className="timeline-tree-scroll relative z-10 w-full overflow-x-auto overflow-y-hidden overscroll-x-contain overscroll-y-none scroll-smooth pb-2 snap-x snap-proximity [-ms-overflow-style:auto] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="timeline-tree-scroll relative z-10 w-full overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-2 snap-x snap-proximity [-ms-overflow-style:auto] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           tabIndex={0}
           role="region"
           aria-label="Memories timeline"
