@@ -12,6 +12,18 @@ export type AnnouncementRecord = {
   created_at: string;
 };
 
+function isSupabaseConfigured(): boolean {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+  
+  // Check if using placeholder values or empty
+  if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") {
+    return false;
+  }
+  
+  return true;
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -39,6 +51,7 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
   const supabase = createClient();
   const [announcement, setAnnouncement] = useState<AnnouncementRecord | null>(latestAnnouncement ?? null);
   const [loading, setLoading] = useState(latestAnnouncement === undefined);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (latestAnnouncement !== undefined) {
@@ -47,16 +60,30 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
       return;
     }
 
-    async function loadLatestAnnouncement() {
-      const { data, error } = await supabase
-        .from("announcements")
-        .select("id,title,content,created_at")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    // Skip fetching if Supabase isn't configured
+    if (!isSupabaseConfigured()) {
+      setLoading(false);
+      return;
+    }
 
-      if (!error) {
-        setAnnouncement((data as AnnouncementRecord | null) ?? null);
+    async function loadLatestAnnouncement() {
+      try {
+        const { data, error } = await supabase
+          .from("announcements")
+          .select("id,title,content,created_at")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!error) {
+          setAnnouncement((data as AnnouncementRecord | null) ?? null);
+        } else {
+          setHasError(true);
+          console.error("Failed to load announcements:", error.message || JSON.stringify(error));
+        }
+      } catch (err) {
+        setHasError(true);
+        console.error("Failed to load announcements:", err instanceof Error ? err.message : String(err));
       }
 
       setLoading(false);
@@ -83,7 +110,15 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
       </motion.div>
 
       <div className="space-y-6">
-        {loading ? (
+        {hasError && (
+          <motion.div
+            variants={itemVariants}
+            className="p-6 border rounded-2xl bg-muted/40 border-border"
+          >
+            <p className="text-muted-foreground">Unable to load announcements. Please configure Supabase credentials in .env.local</p>
+          </motion.div>
+        )}
+        {loading && !hasError ? (
           <motion.div
             variants={itemVariants}
             className="p-6 border rounded-2xl bg-muted/40 border-border"

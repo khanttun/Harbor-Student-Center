@@ -13,7 +13,10 @@ interface Memory {
 }
 
 function getDatabaseErrorMessage(error: any): string {
-  const message = error?.message || "";
+  if (!error) {
+    return "Unknown error occurred. Check that Supabase credentials are configured.";
+  }
+  const message = error?.message || error?.toString?.() || JSON.stringify(error) || "";
   if (message.includes("policies") || message.includes("RLS")) {
     return "Image storage permission denied. Ensure RLS policies allow authenticated users.";
   }
@@ -22,6 +25,9 @@ function getDatabaseErrorMessage(error: any): string {
   }
   if (message.includes("relation") && message.includes("does not exist")) {
     return "Memories table not found. Create table 'memories' with fields: id (UUID), title, date, caption, image_url, created_at.";
+  }
+  if (!message) {
+    return "Failed to load memories. Check your Supabase configuration.";
   }
   return `Error: ${message}`;
 }

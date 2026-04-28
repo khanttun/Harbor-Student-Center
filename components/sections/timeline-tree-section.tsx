@@ -21,7 +21,24 @@ interface TimelineEntry extends Memory {
 const timelineColumnClass =
   "h-[min(400px,calc(52svh-1.5rem))] min-h-0 max-h-[min(400px,calc(52svh-1.5rem))]";
 
+function isSupabaseConfigured(): boolean {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+  
+  // Check if using placeholder values or empty
+  if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") {
+    return false;
+  }
+  
+  return true;
+}
+
 async function getMemoriesFromSupabase(): Promise<MemoriesByYear> {
+  // Skip fetching if credentials aren't configured
+  if (!isSupabaseConfigured()) {
+    return {};
+  }
+
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -30,7 +47,14 @@ async function getMemoriesFromSupabase(): Promise<MemoriesByYear> {
       .order("date", { ascending: true });
 
     if (error) {
-      console.error("Failed to fetch memories:", error);
+      const errorMsg = error.message || JSON.stringify(error);
+      if (errorMsg.includes("fetch failed") || errorMsg.includes("Network")) {
+        console.error("Failed to fetch memories: Network error. Check your Supabase URL in .env.local is valid and not using placeholder values.");
+      } else if (errorMsg.includes("does not exist")) {
+        console.error("Failed to fetch memories: Memories table does not exist. Create the 'memories' table in Supabase.");
+      } else {
+        console.error("Failed to fetch memories:", errorMsg);
+      }
       return {};
     }
 
@@ -55,7 +79,12 @@ async function getMemoriesFromSupabase(): Promise<MemoriesByYear> {
 
     return memoriesByYear;
   } catch (error) {
-    console.error("Error fetching memories:", error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    if (errorMsg.includes("fetch failed") || errorMsg.includes("Network")) {
+      console.error("Error fetching memories: Network error. Verify Supabase credentials in .env.local are not placeholder values.");
+    } else {
+      console.error("Error fetching memories:", errorMsg);
+    }
     return {};
   }
 }

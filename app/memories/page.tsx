@@ -2,6 +2,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { MemoriesHeroSection } from "@/components/sections/memories-hero-section";
 import { TimelineTreeSection } from "@/components/sections/timeline-tree-section";
+import { KindnessNotesSection } from "@/components/sections/kindness-notes-section";
 import { MemoriesCtaSection } from "@/components/sections/memories-cta-section";
 
 export const metadata = {
@@ -15,6 +16,7 @@ export default function MemoriesPage() {
       <Navbar />
       <MemoriesHeroSection />
       <TimelineTreeSection />
+      <KindnessNotesSection />
       <MemoriesCtaSection />
       <Footer />
     </main>
