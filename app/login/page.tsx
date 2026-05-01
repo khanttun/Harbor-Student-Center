@@ -2,37 +2,55 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react"; // Import the icon
+import { ArrowLeft } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setTimeout(() => {
-      if (email === "kzyt@gmail.com" && password === "kzyt10") {
-        setLoading(false);
-        router.push("/dashboard");
-      } else {
-        setLoading(false);
-        setError("Invalid credentials");
+
+    const supabase = createClient();
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+    } else {
+      const trimmedDisplayName = displayName.trim();
+
+      if (trimmedDisplayName) {
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: { display_name: trimmedDisplayName },
+        });
+
+        if (updateError) {
+          setError(updateError.message);
+          setLoading(false);
+          return;
+        }
       }
-    }, 800);
+
+      router.push("/dashboard");
+      router.refresh();
+    }
   }
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-background relative p-4">
-      
+
       {/* --- TOP LEFT BACK BUTTON --- */}
       <div className="absolute top-6 left-6">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group font-medium"
         >
           <div className="p-2 rounded-full group-hover:bg-muted transition-colors">
@@ -52,6 +70,13 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Display Name (optional)"
+            value={displayName}
+            onChange={e => setDisplayName(e.target.value)}
+            className="p-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+          />
           <input
             type="email"
             placeholder="Email"

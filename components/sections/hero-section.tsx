@@ -8,15 +8,15 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const slides = [
   {
-    src: "/images/harborlogo.jpg",
+    src: "/images/hero-group.jpg",
     alt: "The Harbor Student Center",
   },
   {
-    src: "/images/hero-2.jpg",
+    src: "/images/hero-2.png",
     alt: "Community cooking session",
   },
   {
-    src: "/images/hero-3.jpg",
+    src: "/images/hero-3.png",
     alt: "Group celebration",
   },
 ]

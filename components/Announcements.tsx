@@ -1,14 +1,28 @@
 "use client";
 
-import React from "react";
-import { Megaphone, CalendarHeart, ChefHat } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Megaphone } from "lucide-react";
 import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
 
-const announcement = {
-  id: "1",
-  title: "The Harbor Opens This Tuesday",
-  content: "Come by anytime between 3PM and 7PM. Everyone is welcome!",
+export type AnnouncementRecord = {
+  id: string;
+  title: string;
+  content: string;
+  created_at: string;
 };
+
+function isSupabaseConfigured(): boolean {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+  
+  // Check if using placeholder values or empty
+  if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") {
+    return false;
+  }
+  
+  return true;
+}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,9 +43,57 @@ const itemVariants = {
   },
 };
 
-export function Announcements() {
+type AnnouncementsProps = {
+  latestAnnouncement?: AnnouncementRecord | null;
+};
+
+export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
+  const supabase = createClient();
+  const [announcement, setAnnouncement] = useState<AnnouncementRecord | null>(latestAnnouncement ?? null);
+  const [loading, setLoading] = useState(latestAnnouncement === undefined);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    if (latestAnnouncement !== undefined) {
+      setAnnouncement(latestAnnouncement);
+      setLoading(false);
+      return;
+    }
+
+    // Skip fetching if Supabase isn't configured
+    if (!isSupabaseConfigured()) {
+      setLoading(false);
+      return;
+    }
+
+    async function loadLatestAnnouncement() {
+      try {
+        const { data, error } = await supabase
+          .from("announcements")
+          .select("id,title,content,created_at")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (!error) {
+          setAnnouncement((data as AnnouncementRecord | null) ?? null);
+        } else {
+          setHasError(true);
+          console.error("Failed to load announcements:", error.message || JSON.stringify(error));
+        }
+      } catch (err) {
+        setHasError(true);
+        console.error("Failed to load announcements:", err instanceof Error ? err.message : String(err));
+      }
+
+      setLoading(false);
+    }
+
+    void loadLatestAnnouncement();
+  }, [latestAnnouncement]);
+
   return (
-    <motion.section 
+    <motion.section
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
@@ -48,11 +110,29 @@ export function Announcements() {
       </motion.div>
 
       <div className="space-y-6">
-        {announcement && (
-          <motion.div 
+        {hasError && (
+          <motion.div
+            variants={itemVariants}
+            className="p-6 border rounded-2xl bg-muted/40 border-border"
+          >
+            <p className="text-muted-foreground">Unable to load announcements. Please configure Supabase credentials in .env.local</p>
+          </motion.div>
+        )}
+        {loading && !hasError ? (
+          <motion.div
+            variants={itemVariants}
+            className="p-6 border rounded-2xl bg-muted/40 border-border"
+          >
+            <p className="text-muted-foreground">Loading latest announcement...</p>
+          </motion.div>
+        ) : announcement ? (
+          <motion.div
             variants={itemVariants}
             className="p-6 bg-muted/50 rounded-2xl border border-border hover:border-primary/20 transition-colors"
           >
+            <p className="mb-2 text-xs font-semibold tracking-wide uppercase text-primary">
+              Posted {new Date(announcement.created_at).toLocaleDateString()}
+            </p>
             <h3 className="font-bold text-xl text-foreground mb-2">
               {announcement.title}
             </h3>
@@ -60,41 +140,14 @@ export function Announcements() {
               {announcement.content}
             </p>
           </motion.div>
+        ) : (
+          <motion.div
+            variants={itemVariants}
+            className="p-6 border rounded-2xl bg-muted/40 border-border"
+          >
+            <p className="text-muted-foreground">No announcements available right now.</p>
+          </motion.div>
         )}
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <motion.div 
-            variants={itemVariants}
-            whileHover={{ y: -5 }}
-            className="p-6 bg-primary/5 border border-primary/10 rounded-2xl transition-shadow hover:shadow-lg"
-          >
-            <div className="flex items-center gap-3 mb-4 text-primary">
-              <ChefHat className="w-6 h-6" />
-              <h3 className="font-bold text-lg">Saturday Feast</h3>
-            </div>
-            <p className="text-foreground/80 text-base leading-relaxed">
-              Join us this Saturday for a delicious feast featuring Pizza and Fried Rice!
-              Make sure you check your schedule and don&apos;t miss out on the incredible food.
-            </p>
-          </motion.div>
-
-          <motion.div 
-            variants={itemVariants}
-            whileHover={{ y: -5 }}
-            className="p-6 bg-secondary/5 border border-secondary/10 rounded-2xl transition-shadow hover:shadow-lg relative overflow-hidden"
-          >
-            <div className="flex items-center gap-3 mb-4 text-secondary">
-              <CalendarHeart className="w-6 h-6" />
-              <h3 className="font-bold text-lg">Post-Exam Treat</h3>
-            </div>
-            <p className="text-secondary-foreground/90 font-bold mb-2 relative z-10">
-              🎉 Special Highlight: 150 Fried Chickens!
-            </p>
-            <p className="text-muted-foreground text-sm relative z-10 leading-relaxed">
-              Celebrate the end of exams with an ultimate treat! Brought to you by the Harbor Student Center.
-            </p>
-          </motion.div>
-        </div>
       </div>
     </motion.section>
   );

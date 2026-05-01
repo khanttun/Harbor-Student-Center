@@ -1,5 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createBrowserClient } from "@supabase/ssr";
 
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -20,28 +19,11 @@ function validateSupabaseConfig() {
   return true;
 }
 
-export async function createClient() {
+export function createClient() {
   validateSupabaseConfig();
-  const cookieStore = await cookies();
-
-  return createServerClient(
+  
+  return createBrowserClient(
     supabaseUrl,
     supabaseAnonKey,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // Called from a Server Component — middleware handles session refresh
-          }
-        },
-      },
-    },
   );
 }
