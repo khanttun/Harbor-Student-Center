@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer"
 import { HeroSection } from "@/components/sections/hero-section"
 import { MissionSection } from "@/components/sections/mission-section"
 import { WhatWeDoSection } from "@/components/sections/what-we-do-section"
+import { HarborDesignShowcase } from "@/components/sections/harbor-design-showcase"
 import { UpcomingEventSection } from "@/components/sections/upcoming-event-section"
 import { MemoriesSection } from "@/components/sections/memories-section"
 import { CTASection } from "@/components/sections/cta-section"
@@ -24,6 +25,7 @@ export default function HomePage() {
       <div className="relative z-10 bg-background">
         <MissionSection />
         <WhatWeDoSection />
+        <HarborDesignShowcase />
         <UpcomingEventSection />
         
         <section className="py-20 sm:py-32 bg-background">
