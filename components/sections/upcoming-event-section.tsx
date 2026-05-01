@@ -3,30 +3,46 @@
 import Link from "next/link"
 import Image from "next/image"
 import { CalendarDays, Clock, MapPin } from "lucide-react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
 
+const SPOTLIGHT_IMAGE_SRC = "/images/event.jpg"
+
 export function UpcomingEventSection() {
+  const [previewOpen, setPreviewOpen] = useState(false)
+
   return (
     <section id="events" className="bg-muted py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Image */}
-          <motion.div 
+          <motion.button
+            type="button"
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative aspect-4/3 overflow-hidden rounded-3xl shadow-2xl"
+            onClick={() => setPreviewOpen(true)}
+            aria-haspopup="dialog"
+            aria-label="Open larger event photo"
+            className="group relative aspect-4/3 w-full overflow-hidden rounded-3xl text-left shadow-2xl outline-offset-4 transition-transform hover:brightness-[1.02] focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Image
-              src="/images/event.jpg"
-              alt="Saturday lunch gathering at restaurant"
+              src={SPOTLIGHT_IMAGE_SRC}
+              alt=""
               fill
-              className="object-cover transition-transform duration-700 hover:scale-105"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
-          </motion.div>
+          </motion.button>
 
           {/* Content */}
           <motion.div
@@ -83,6 +99,36 @@ export function UpcomingEventSection() {
             </Button>
           </motion.div>
         </div>
+
+        <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+          <DialogContent className="max-h-[calc(100dvh-3rem)] w-[calc(100%-1.25rem)] max-w-4xl overflow-hidden p-0 gap-0 sm:p-0">
+            <DialogHeader className="gap-2 border-b border-border bg-muted/30 px-5 py-4 text-left">
+              <DialogTitle style={{ fontFamily: "var(--font-heading)" }} className="text-xl sm:text-2xl">
+                Saturday Lunch at TROIS MONTS Restaurant
+              </DialogTitle>
+              <p className="text-sm font-medium text-foreground">
+                Saturday, March 29, 2026 · 3:00 PM – 6:00 PM · TROIS MONTS Restaurant, Chiang Rai
+              </p>
+              <DialogDescription className="sr-only">
+                Large photo of Saturday lunch gathering
+              </DialogDescription>
+            </DialogHeader>
+            <div className="relative aspect-video w-full max-h-[72dvh] bg-black">
+              <Image
+                src={SPOTLIGHT_IMAGE_SRC}
+                alt=""
+                fill
+                className="object-contain"
+                sizes="(max-width: 896px) 100vw, 896px"
+              />
+            </div>
+            <div className="flex justify-end border-t border-border bg-muted/20 px-5 py-3">
+              <Button asChild variant="outline" size="sm" className="rounded-full">
+                <Link href="/events">See more events</Link>
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   )
