@@ -14,7 +14,7 @@ export default function ContactPage() {
       <ContactMethodsSection />
       <LocationSection />
       
-      <section className="py-16 bg-muted/30">
+      <section id="leave-a-note" className="scroll-mt-24 py-16 bg-muted/30">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold font-[family-name:var(--font-heading)] mb-4">Leave a Note of Kindness</h2>

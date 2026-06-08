@@ -1,36 +1,37 @@
 "use client";
 
-import { Heart, MessageCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Heart, MessageCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ShieldAlert } from "lucide-react";
 import React, { useState, useEffect } from "react";
-
-/**
- * BACKEND SETUP REQUIRED:
- * 
- * 1. Create a Supabase table called "kindness_notes" with the following schema:
- *    - id (uuid, primary key)
- *    - student_name (text, required)
- *    - message (text, required)
- *    - recipient (text, constant: 'katrina & floyd', required)
- *    - created_at (timestamp, default: now())
- *    - updated_at (timestamp, default: now())
- *    - is_approved (boolean, default: false) - for moderation purposes
- * 
- * 2. Create a backend API endpoint POST /api/kindness-notes that:
- *    - Accepts: { student_name: string, message: string }
- *    - Stores the note in the kindness_notes table with is_approved: false and recipient: 'katrina & floyd'
- *    - Returns success/error response
- * 
- * 3. Create a backend endpoint GET /api/kindness-notes that:
- *    - Returns only approved notes
- *    - Orders by created_at descending (newest first)
- *    - Returns array of: { id, student_name, message, created_at }
- */
+import { createClient } from "@/lib/supabase/client";
 
 interface KindnessNote {
   id: string;
   student_name: string;
   message: string;
   created_at: string;
+}
+
+function isSupabaseConfigured(): boolean {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+
+  if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") {
+    return false;
+  }
+
+  return true;
+}
+
+function LeaveNoteButton() {
+  return (
+    <a
+      href="/contact#leave-a-note"
+      className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-semibold text-white shadow-lg transition-colors duration-200 hover:bg-rose-600 hover:shadow-xl"
+    >
+      <Heart className="h-5 w-5" />
+      Leave a Note of Kindness
+    </a>
+  );
 }
 
 export function KindnessNotesSection() {
@@ -40,48 +41,27 @@ export function KindnessNotesSection() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setLoading(false);
+      return;
+    }
+
+    const supabase = createClient();
+
     const fetchNotes = async () => {
       try {
-        setLoading(true);
-        // TODO: Replace with actual backend API call
-        // const response = await fetch(`/api/kindness-notes`);
-        // const data = await response.json();
-        // setNotes(data);
+        const { data, error } = await supabase
+          .from("kindness_notes")
+          .select("id, student_name, message, created_at")
+          .order("created_at", { ascending: false });
 
-        // Mock data for demonstration (remove after backend is ready)
-        const mockNotes: KindnessNote[] = [
-          {
-            id: "1",
-            student_name: "Sarah Johnson",
-            message: "Thank you for always being there to listen and support us. Your kindness means the world!",
-            created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "2",
-            student_name: "Marcus Chen",
-            message: "I really appreciate all the guidance and encouragement. You've helped me grow so much.",
-            created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "3",
-            student_name: "Emma Williams",
-            message: "Your passion and dedication inspire us all. Thank you for everything you do!",
-            created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "4",
-            student_name: "David Park",
-            message: "You both make such a difference in our lives. We are so grateful for you!",
-            created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: "5",
-            student_name: "Olivia Martinez",
-            message: "Thank you for believing in us when we didn't believe in ourselves.",
-            created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-        ];
-        setNotes(mockNotes);
+        if (error) {
+          console.error("Failed to fetch kindness notes:", error.message);
+          setNotes([]);
+          return;
+        }
+
+        setNotes((data as KindnessNote[]) ?? []);
       } catch (error) {
         console.error("Failed to fetch kindness notes:", error);
         setNotes([]);
@@ -90,7 +70,22 @@ export function KindnessNotesSection() {
       }
     };
 
-    fetchNotes();
+    void fetchNotes();
+
+    const channel = supabase
+      .channel("kindness_notes_realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "kindness_notes" },
+        () => {
+          void fetchNotes();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -138,6 +133,15 @@ export function KindnessNotesSection() {
           <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
             Read the kind words students have left for Sayarma Katrina and Sayar Floyd
           </p>
+          <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+            <p className="flex items-start justify-center gap-2 text-left sm:text-center">
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+              Abusive or malicious messages will be taken down immediately. IP addresses are recorded to prevent abuse.
+            </p>
+          </div>
+          <div className="mt-8">
+            <LeaveNoteButton />
+          </div>
         </div>
 
         {loading ? (
@@ -325,22 +329,17 @@ export function KindnessNotesSection() {
 
             {/* Call to action */}
             <div className="mt-12 text-center">
-              <p className="text-muted-foreground mb-4">Want to leave a message of your own?</p>
-              <a
-                href="/contact"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-semibold transition-colors duration-200 shadow-lg hover:shadow-xl"
-              >
-                <Heart className="w-5 h-5" />
-                Leave a Note
-              </a>
+              <p className="mb-4 text-muted-foreground">Want to leave a message of your own?</p>
+              <LeaveNoteButton />
             </div>
           </>
         ) : (
-          <div className="text-center py-12 px-6">
-            <MessageCircle className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-            <p className="text-muted-foreground text-lg">
+          <div className="px-6 py-12 text-center">
+            <MessageCircle className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
+            <p className="mb-6 text-lg text-muted-foreground">
               No messages yet. Be the first to share your appreciation!
             </p>
+            <LeaveNoteButton />
           </div>
         )}
       </div>

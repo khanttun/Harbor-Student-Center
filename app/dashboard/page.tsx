@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Bell, CalendarDays, Images, Sparkles } from "lucide-react";
+import { Bell, CalendarDays, Heart, Images, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardPage() {
@@ -30,6 +30,12 @@ export default async function DashboardPage() {
       title: "Manage Announcements",
       description: "Publish important updates so students never miss key news.",
       icon: Bell,
+    },
+    {
+      href: "/dashboard/appreciation",
+      title: "Manage Appreciation",
+      description: "Review student messages and take down abusive or malicious notes.",
+      icon: Heart,
     },
   ];
 
@@ -75,7 +81,7 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-3">
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Events</p>
             <p className="mt-2 text-2xl font-bold">Organize</p>
@@ -91,11 +97,16 @@ export default async function DashboardPage() {
             <p className="mt-2 text-2xl font-bold">Inform</p>
             <p className="mt-1 text-sm text-muted-foreground">Share updates and urgent notices fast.</p>
           </div>
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">Appreciation</p>
+            <p className="mt-2 text-2xl font-bold">Moderate</p>
+            <p className="mt-1 text-sm text-muted-foreground">Remove harmful messages from the board.</p>
+          </div>
         </section>
 
         <section>
           <h3 className="mb-4 text-lg font-semibold md:text-xl">Management Shortcuts</h3>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {dashboardCards.map((card) => {
               const Icon = card.icon;
 

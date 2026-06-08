@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const slides = [
@@ -30,9 +29,6 @@ export function HeroSection() {
     }, 5000)
     return () => clearInterval(timer)
   }, [])
-
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
   return (
     <section className="relative h-[70svh] min-h-[420px] w-full overflow-hidden sm:min-h-[500px] md:min-h-[560px] lg:min-h-[600px]">
@@ -92,22 +88,6 @@ export function HeroSection() {
           </Button>
         </motion.div>
       </div>
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-white/30 sm:left-4 sm:p-2"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-white/30 sm:right-4 sm:p-2"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
 
       {/* Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-2">

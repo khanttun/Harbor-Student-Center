@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-// Passcode answer (case-insensitive, can be changed as needed)
-const PET_NAME = "mocha";
 import { Heart, Send, CheckCircle2 } from "lucide-react";
 
-// You can override this URL via environment variables
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+// Passcode answer (case-insensitive, can be changed as needed)
+const PET_NAME = "daisy may";
 
 export function ThankYouForm() {
   const [studentName, setStudentName] = useState("");
@@ -24,18 +22,28 @@ export function ThankYouForm() {
     setError("");
     setIsSuccess(false);
     try {
-      const response = await fetch(`${API_URL}/api/thanks`, {
+      const response = await fetch("/api/kindness-notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentName, message }),
       });
-      if (!response.ok) throw new Error("Failed to submit your note");
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(
+          typeof data?.error === "string" ? data.error : "Failed to submit note",
+        );
+      }
+
       setIsSuccess(true);
       setStudentName("");
       setMessage("");
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
-      setError("Something went wrong. Please try again later.");
+      setError(
+        err instanceof Error ? err.message : "Something went wrong. Please try again later.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -52,7 +60,7 @@ export function ThankYouForm() {
   // Passcode check and submit
   const handlePasscodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcode.trim().toLowerCase() === PET_NAME) {
+    if (passcode.trim().toLowerCase() === PET_NAME.toLowerCase()) {
       setShowPasscode(false);
       setPasscode("");
       setPasscodeError("");
@@ -129,7 +137,7 @@ export function ThankYouForm() {
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
               <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-6 w-full max-w-xs border border-zinc-200 dark:border-zinc-800 relative">
                 <h3 className="text-lg font-bold mb-2">Community Passcode</h3>
-                <p className="text-sm mb-4">What is the name of Sayarma Katrina and Sayar Floyd's pet?</p>
+                <p className="text-sm mb-4">What is the name of Sayarma Katrina and Sayar Floyd's pet? (Case-insensitive, include spaces.)</p>
                 <div className="space-y-3">
                   <input
                     type="text"

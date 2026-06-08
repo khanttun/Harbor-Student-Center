@@ -7,6 +7,7 @@ import {
   Users,
   Calendar,
   FileText,
+  Heart,
   LogOut,
   ChevronLeft,
   Menu,
@@ -27,6 +28,7 @@ const Sidebar = ({ mobile = false, onNavigate }: SidebarProps) => {
     { icon: <Calendar size={20} />, label: "Events", href: "/dashboard/events" },
     { icon: <FileText size={20} />, label: "Memories", href: "/dashboard/memories" },
     { icon: <Users size={20} />, label: "Announcements", href: "/dashboard/announcements" },
+    { icon: <Heart size={20} />, label: "Appreciation", href: "/dashboard/appreciation" },
   ];
 
   const showLabels = mobile || !isCollapsed;
