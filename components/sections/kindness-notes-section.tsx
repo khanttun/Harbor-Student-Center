@@ -125,17 +125,17 @@ export function KindnessNotesSection() {
       <div className="relative z-10 container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Heart className="w-6 h-6 text-rose-500 fill-rose-500" />
+          <div className="mb-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <Heart className="h-5 w-5 fill-rose-500 text-rose-500 sm:h-6 sm:w-6" />
             <h2
-              className="text-4xl font-bold text-foreground"
+              className="text-2xl font-bold text-foreground sm:text-3xl md:text-4xl"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               Messages of Appreciation
             </h2>
-            <Heart className="w-6 h-6 text-rose-500 fill-rose-500" />
+            <Heart className="h-5 w-5 fill-rose-500 text-rose-500 sm:h-6 sm:w-6" />
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
             Read the kind words students have left for Sayarma Katrina and Sayar Floyd
           </p>
         </div>
@@ -164,7 +164,7 @@ export function KindnessNotesSection() {
                   <div className="absolute inset-0 bg-gradient-to-r from-rose-50/50 to-amber-50/50 dark:from-rose-950/20 dark:to-amber-950/20 rounded-2xl border border-rose-200/50 dark:border-rose-900/30 shadow-md group-hover:shadow-lg transition-shadow duration-300" />
 
                   {/* Content */}
-                  <div className="relative p-8 md:p-10">
+                  <div className="relative p-5 sm:p-8 md:p-10">
                     {/* Top section with icon and name */}
                     <div className="flex items-start gap-4 mb-6">
                       <div className="flex-shrink-0">
@@ -192,7 +192,7 @@ export function KindnessNotesSection() {
                     </div>
 
                     {/* Message */}
-                    <p className="text-lg text-foreground leading-relaxed mb-8 italic min-h-[100px] flex items-center">
+                    <p className="mb-8 flex min-h-[80px] items-center text-base italic leading-relaxed text-foreground sm:min-h-[100px] sm:text-lg">
                       "{notes[currentSlide].message}"
                     </p>
 
@@ -310,7 +310,7 @@ export function KindnessNotesSection() {
                         </div>
 
                         {/* Message */}
-                        <p className="text-base text-foreground leading-relaxed pl-14 py-1">
+                        <p className="py-1 pl-0 text-base leading-relaxed text-foreground sm:pl-14">
                           "{note.message}"
                         </p>
                       </div>

@@ -68,21 +68,21 @@ export function UpcomingEventSection() {
             </p>
 
             <Card className="mb-8 border-0 bg-card shadow-lg">
-              <CardContent className="flex flex-col gap-5 p-8">
-                <div className="flex items-center gap-4 text-foreground">
+              <CardContent className="flex flex-col gap-4 p-5 sm:gap-5 sm:p-8">
+                <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                     <CalendarDays className="h-5 w-5 text-primary" />
                   </div>
                   <span className="text-base font-medium sm:text-lg">Saturday, March 29, 2026</span>
                 </div>
-                <div className="flex items-center gap-4 text-foreground">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
                   <span className="text-base font-medium sm:text-lg">3:00 PM - 6:00 PM</span>
                 </div>
-                <div className="flex items-center gap-4 text-foreground">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <span className="text-base font-medium sm:text-lg">TROIS MONTS Restaurant, Chiang Rai</span>
@@ -93,7 +93,7 @@ export function UpcomingEventSection() {
             <Button 
               asChild
               size="lg" 
-              className="rounded-full bg-primary px-10 py-7 text-lg font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"
+              className="w-full rounded-full bg-primary px-6 py-5 text-base font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 sm:w-auto sm:px-10 sm:py-7 sm:text-lg"
             >
               <Link href="/events">View All Events</Link>
             </Button>

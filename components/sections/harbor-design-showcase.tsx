@@ -15,7 +15,7 @@ const spaces = [
     src: "/Design/front-room.png",
     title: "Main Lounge",
     blurb: "Comfy seating, soft lighting, and room for everyone to gather.",
-    className: "md:col-span-2 md:row-span-2",
+    className: "sm:col-span-2 sm:row-span-2 lg:col-span-2 lg:row-span-2",
   },
   {
     src: "/Design/main-lounge.png",
@@ -79,7 +79,7 @@ export function HarborDesignShowcase() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4 auto-rows-[180px] sm:auto-rows-[200px]">
+        <div className="grid auto-rows-[160px] gap-3 sm:auto-rows-[180px] sm:grid-cols-2 sm:gap-4 md:auto-rows-[200px] lg:grid-cols-4">
           {spaces.map((space, index) => (
             <button
               key={space.src}

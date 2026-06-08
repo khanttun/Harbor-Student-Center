@@ -126,7 +126,7 @@ export default function AnnouncementForm() {
         className="overflow-hidden transition-all border shadow-xl bg-card rounded-2xl border-border"
       >
         {/* Header Section */}
-        <div className="flex items-center gap-4 px-8 py-6 border-b bg-primary/5 border-border">
+        <div className="flex items-center gap-3 border-b border-border bg-primary/5 px-4 py-4 sm:gap-4 sm:px-8 sm:py-6">
           <div className="p-3 shadow-lg bg-primary rounded-xl text-primary-foreground shadow-primary/20">
             <Megaphone size={24} />
           </div>
@@ -140,7 +140,7 @@ export default function AnnouncementForm() {
           </div>
         </div>
 
-        <div className="p-8 space-y-6">
+        <div className="space-y-6 p-4 sm:p-8">
           {/* Title Input */}
           <div className="space-y-2">
             <label className="ml-1 text-sm font-semibold text-foreground">Heading</label>
@@ -213,7 +213,7 @@ export default function AnnouncementForm() {
       </form>
 
       <div className="overflow-hidden transition-all border shadow-xl bg-card rounded-2xl border-border">
-        <div className="flex items-center justify-between px-8 py-6 border-b bg-muted/40 border-border">
+        <div className="flex flex-col gap-2 border-b border-border bg-muted/40 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-6">
           <div>
             <h3 className="text-xl font-bold text-foreground">Published Announcements</h3>
             <p className="text-sm text-muted-foreground">The newest announcement becomes the featured latest update.</p>
@@ -228,7 +228,7 @@ export default function AnnouncementForm() {
             announcements.map((announcement, index) => (
               <div
                 key={announcement.id}
-                className="flex items-start justify-between gap-4 p-4 transition-colors border rounded-xl border-border bg-background hover:bg-muted/30"
+                className="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
               >
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">

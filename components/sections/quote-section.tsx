@@ -4,27 +4,27 @@ import { motion } from "framer-motion"
 
 export function QuoteSection() {
   return (
-    <section className="py-24 sm:py-32 px-4 bg-primary/[0.03]">
-      <div className="max-w-4xl mx-auto text-center">
+    <section className="overflow-hidden bg-primary/[0.03] px-4 py-16 sm:py-24 md:py-32">
+      <div className="mx-auto max-w-4xl text-center">
         <motion.blockquote 
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative px-8"
+          className="relative px-2 sm:px-8"
         >
-          <span className="absolute -top-12 left-0 text-8xl sm:text-9xl text-primary/10 font-serif leading-none select-none">&ldquo;</span>
-          <p className="font-[family-name:var(--font-heading)] text-xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight sm:leading-relaxed text-balance">
+          <span className="absolute -top-8 left-0 select-none font-serif text-5xl leading-none text-primary/10 sm:-top-12 sm:text-8xl md:text-9xl">&ldquo;</span>
+          <p className="font-[family-name:var(--font-heading)] text-lg font-bold leading-tight text-foreground text-balance sm:text-3xl sm:leading-relaxed lg:text-4xl">
             We do this because we love Myanmar people.
           </p>
-          <span className="absolute -bottom-16 right-0 text-8xl sm:text-9xl text-primary/10 font-serif leading-none select-none">&rdquo;</span>
+          <span className="absolute -bottom-10 right-0 select-none font-serif text-5xl leading-none text-primary/10 sm:-bottom-16 sm:text-8xl md:text-9xl">&rdquo;</span>
         </motion.blockquote>
         <motion.p 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 text-muted-foreground font-medium sm:text-lg"
+          className="mt-8 font-medium text-muted-foreground sm:mt-12 sm:text-lg"
         >
           — Katrina & Floyd Graham
         </motion.p>

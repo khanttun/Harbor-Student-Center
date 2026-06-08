@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { createClient } from "@/lib/supabase/server";
 import { EventShareButton } from "@/components/event-share-button";
+import { EventDetailImage } from "@/components/event-detail-image";
 
 type EventRecord = {
     id: string;
@@ -95,18 +96,18 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
                 <div className="overflow-hidden border shadow-sm bg-card rounded-3xl border-border">
                     {event.image_url && (
-                        <div className="relative w-full h-70 md:h-105 bg-muted">
-                            <img
-                                src={event.image_url}
-                                alt={event.title}
-                                className="object-cover w-full h-full"
-                            />
-                            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
-                            <div className="absolute inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full shadow-sm left-6 bottom-6 bg-background/90 text-foreground">
-                                <Icon className="w-4 h-4" />
-                                {CATEGORY_LABELS[category]}
-                            </div>
-                        </div>
+                        <EventDetailImage
+                            src={event.image_url}
+                            alt={event.title}
+                            title={event.title}
+                            description={event.description}
+                            badge={
+                                <div className="absolute bottom-6 left-6 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-semibold text-foreground shadow-sm">
+                                    <Icon className="h-4 w-4" />
+                                    {CATEGORY_LABELS[category]}
+                                </div>
+                            }
+                        />
                     )}
 
                     <div className="p-6 md:p-10">

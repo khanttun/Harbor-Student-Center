@@ -4,7 +4,7 @@ import Image from "next/image"
 
 export function ContactHeroSection() {
   return (
-    <section className="relative h-[50vh] min-h-100 w-full overflow-hidden">
+    <section className="relative h-[45svh] min-h-[280px] w-full overflow-hidden sm:min-h-[320px] md:h-[50vh] md:min-h-[360px]">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -25,7 +25,7 @@ export function ContactHeroSection() {
       {/* Content */}
       <div className="relative flex h-full flex-col items-center justify-center px-4 text-center">
         <h1 
-          className="mb-4 text-4xl font-bold text-white sm:text-5xl text-balance"
+          className="mb-4 text-3xl font-bold text-white text-balance sm:text-4xl md:text-5xl"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
           Contact Us

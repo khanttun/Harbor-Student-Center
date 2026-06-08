@@ -2,11 +2,15 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { MessageCircle, Facebook } from "lucide-react"
+import { ImagePreviewDialog } from "@/components/image-preview-dialog"
 
 export function ContactMethodsSection() {
+  const [coordinatorsPreviewOpen, setCoordinatorsPreviewOpen] = useState(false)
+
   return (
     <section className="py-16 sm:py-20 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -26,7 +30,7 @@ export function ContactMethodsSection() {
           {/* Left Side: Messenger Group Card */}
           <Card className="group relative overflow-hidden border-0 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col">
             <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <CardContent className="relative flex flex-1 flex-col gap-6 p-8">
+            <CardContent className="relative flex flex-1 flex-col gap-5 p-5 sm:gap-6 sm:p-8">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
                 <MessageCircle className="h-7 w-7" />
               </div>
@@ -42,7 +46,7 @@ export function ContactMethodsSection() {
 
               <Button
                 asChild
-                className="mt-4 w-full sm:w-fit rounded-full bg-primary px-8 py-6 text-lg text-white hover:bg-primary/90 transition-all"
+                className="mt-4 w-full rounded-full bg-primary px-6 py-5 text-base text-white transition-all hover:bg-primary/90 sm:w-fit sm:px-8 sm:py-6 sm:text-lg"
               >
                 <Link href="https://m.me/ch/AbbgVeO_7EtUQRQp/" target="_blank" rel="noopener noreferrer">
                   Join Group
@@ -55,21 +59,26 @@ export function ContactMethodsSection() {
           <Card className="group relative overflow-hidden border-0 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col">
             <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             
-            {/* Unified Image Header */}
-            <div className="relative h-56 w-full overflow-hidden">
-              <Image 
-                src="images/katrina-floyd.jpg" 
-                alt="Sayarma Katrina and Sayar Floyd" 
-                fill 
+            <button
+              type="button"
+              onClick={() => setCoordinatorsPreviewOpen(true)}
+              aria-haspopup="dialog"
+              aria-label="Open larger view: Our Coordinators"
+              className="relative h-56 w-full cursor-pointer overflow-hidden text-left focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Image
+                src="/images/katrina-floyd.jpg"
+                alt="Sayarma Katrina and Sayar Floyd"
+                fill
                 className="object-cover object-[center_80%] transition-transform duration-700 group-hover:scale-105"
                 priority
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-4 left-6">
                 <h3 className="text-xl font-bold text-white">Our Coordinators</h3>
-                <p className="text-white/80 text-sm">Always here for you</p>
+                <p className="text-sm text-white/80">Always here for you</p>
               </div>
-            </div>
+            </button>
 
             <CardContent className="relative p-6 sm:p-8">
               <div className="grid gap-6 sm:grid-cols-2">
@@ -117,6 +126,17 @@ export function ContactMethodsSection() {
           </Card>
         </div>
       </div>
+
+      <ImagePreviewDialog
+        item={{
+          src: "/images/katrina-floyd.jpg",
+          alt: "Sayarma Katrina and Sayar Floyd",
+          title: "Our Coordinators",
+          description: "Sayarma Katrina Trask Graham and Sayar Floyd S. Graham — always here for Myanmar students at The Harbor.",
+        }}
+        open={coordinatorsPreviewOpen}
+        onOpenChange={setCoordinatorsPreviewOpen}
+      />
     </section>
   )
 }

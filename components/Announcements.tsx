@@ -98,7 +98,7 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={containerVariants}
-      className="p-8 bg-card rounded-3xl shadow-xl border border-border"
+      className="rounded-3xl border border-border bg-card p-5 shadow-xl sm:p-8"
     >
       <motion.div variants={itemVariants} className="flex items-center gap-4 mb-8">
         <div className="p-4 bg-primary/10 text-primary rounded-2xl">

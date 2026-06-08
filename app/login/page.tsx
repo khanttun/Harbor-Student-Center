@@ -48,21 +48,21 @@ export default function AdminLoginPage() {
     <main className="min-h-screen flex items-center justify-center bg-background relative p-4">
 
       {/* --- TOP LEFT BACK BUTTON --- */}
-      <div className="absolute top-6 left-6">
+      <div className="absolute left-4 top-4 sm:left-6 sm:top-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group font-medium"
+          className="group flex items-center gap-2 font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
-          <div className="p-2 rounded-full group-hover:bg-muted transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+          <div className="rounded-full p-2 transition-colors group-hover:bg-muted">
+            <ArrowLeft className="h-5 w-5" />
           </div>
-          <span>Back to Home</span>
+          <span className="hidden sm:inline">Back to Home</span>
         </Link>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-card p-8 rounded-2xl shadow-lg border border-border w-full max-w-md flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300"
+        className="flex w-full max-w-md flex-col gap-6 rounded-2xl border border-border bg-card p-5 shadow-lg animate-in fade-in zoom-in-95 duration-300 sm:p-8"
       >
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-2">Admin Login</h1>

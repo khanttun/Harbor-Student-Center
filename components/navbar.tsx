@@ -63,8 +63,11 @@ export function Navbar() {
 
   useEffect(() => {
     if (!isOpen) {
+      document.body.style.overflow = ""
       return
     }
+
+    document.body.style.overflow = "hidden"
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -74,7 +77,10 @@ export function Navbar() {
 
     window.addEventListener("keydown", handleKeyDown)
 
-    return () => window.removeEventListener("keydown", handleKeyDown)
+    return () => {
+      document.body.style.overflow = ""
+      window.removeEventListener("keydown", handleKeyDown)
+    }
   }, [isOpen])
 
   const renderNavLink = ({ href, label }: (typeof navLinks)[number], mobile = false) => {
@@ -111,18 +117,18 @@ export function Navbar() {
       )}
     >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4 py-3 h-18">
-          <Link href="/" className="flex items-center gap-3 group">
+        <div className="flex h-16 items-center justify-between gap-3 py-2 sm:h-18 sm:gap-4 sm:py-3">
+          <Link href="/" className="group flex min-w-0 items-center gap-2 sm:gap-3">
             <Image
               src="/harborlogo.jpg"
               alt="Harbor Logo"
               width={44}
               height={44}
-              className="object-cover transition-transform border rounded-full border-border bg-card group-hover:scale-105"
+              className="h-10 w-10 shrink-0 rounded-full border border-border bg-card object-cover transition-transform group-hover:scale-105 sm:h-11 sm:w-11"
             />
             <div className="min-w-0">
               <motion.span
-                className="block text-lg font-bold text-foreground"
+                className="block text-base font-bold text-foreground sm:text-lg"
                 style={{ fontFamily: "var(--font-heading)" }}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -130,7 +136,7 @@ export function Navbar() {
               >
                 The Harbor
               </motion.span>
-              <span className="block text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground">
+              <span className="block text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground sm:text-xs sm:tracking-[0.24em]">
                 Student Center
               </span>
             </div>

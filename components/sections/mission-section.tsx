@@ -47,10 +47,10 @@ export function MissionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="relative rounded-3xl bg-card p-10 shadow-xl border border-primary/5"
+          className="relative rounded-3xl border border-primary/5 bg-card p-6 shadow-xl sm:p-10"
         >
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-            <span className="text-7xl text-primary/20">&ldquo;</span>
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 sm:-top-6">
+            <span className="text-5xl text-primary/20 sm:text-7xl">&ldquo;</span>
           </div>
           <p 
             className="text-lg italic text-foreground sm:text-2xl md:text-3xl leading-snug"

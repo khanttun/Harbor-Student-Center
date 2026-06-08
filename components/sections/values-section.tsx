@@ -31,7 +31,7 @@ function ValueCard({ icon, title, description, index }: ValueCardProps) {
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
-      className="bg-card rounded-3xl p-8 shadow-sm border border-border/50 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+      className="rounded-3xl border border-border/50 bg-card p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8"
     >
       <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
         {icon}

@@ -1,7 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import { SectionHeading } from "@/components/section-heading"
+import { ImageCard } from "@/components/image-card"
 import { motion } from "framer-motion"
 
 export function MeaningSection() {
@@ -41,7 +41,7 @@ export function MeaningSection() {
             </div>
           </motion.div>
           
-          <div className="grid grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -49,30 +49,28 @@ export function MeaningSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-6"
             >
-              <div className="aspect-[3/4] relative rounded-3xl overflow-hidden shadow-2xl">
-                <Image
-                  src="/images/meaning-1.jpg"
-                  alt="Students sharing a meal together"
-                  fill
-                  className="object-cover transition-transform duration-700 hover:scale-105"
-                />
-              </div>
+              <ImageCard
+                src="/images/meaning-1.jpg"
+                alt="Students sharing a meal together"
+                title="Sharing a meal together"
+                description="Students gathering around the table at The Harbor Student Center."
+                className="aspect-[3/4] rounded-3xl shadow-2xl"
+              />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="space-y-6 pt-12"
+              className="space-y-6 pt-0 sm:pt-12"
             >
-              <div className="aspect-[3/4] relative rounded-3xl overflow-hidden shadow-2xl">
-                <Image
-                  src="/images/meaning-2.jpg"
-                  alt="Community gathering and conversation"
-                  fill
-                  className="object-cover transition-transform duration-700 hover:scale-105"
-                />
-              </div>
+              <ImageCard
+                src="/images/meaning-2.jpg"
+                alt="Community gathering and conversation"
+                title="Community gathering"
+                description="Friends connecting and sharing stories at our student center."
+                className="aspect-[3/4] rounded-3xl shadow-2xl"
+              />
             </motion.div>
           </div>
         </div>

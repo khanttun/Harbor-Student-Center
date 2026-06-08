@@ -1,76 +1,80 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  GraduationCap,
   Calendar,
   FileText,
-  Settings,
   LogOut,
   ChevronLeft,
-  Menu
-} from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+  Menu,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
-const Sidebar = () => {
+interface SidebarProps {
+  mobile?: boolean;
+  onNavigate?: () => void;
+}
+
+const Sidebar = ({ mobile = false, onNavigate }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const menuItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', href: '/dashboard' },
-    { icon: <Calendar size={20} />, label: 'Events', href: '/dashboard/events' },
-    { icon: <FileText size={20} />, label: 'Memories', href: '/dashboard/memories' },
-    { icon: <Users size={20} />, label: 'Announcements', href: '/dashboard/announcements' },
-    // Add more as needed
+    { icon: <LayoutDashboard size={20} />, label: "Dashboard", href: "/dashboard" },
+    { icon: <Calendar size={20} />, label: "Events", href: "/dashboard/events" },
+    { icon: <FileText size={20} />, label: "Memories", href: "/dashboard/memories" },
+    { icon: <Users size={20} />, label: "Announcements", href: "/dashboard/announcements" },
   ];
+
+  const showLabels = mobile || !isCollapsed;
 
   return (
     <div
-      className={`h-full shrink-0 overflow-hidden transition-all duration-300 flex flex-col`
-        + ` ${isCollapsed ? 'w-20' : 'w-64'}`
-        + ' bg-white text-sidebar-foreground'}
+      className={`flex h-full shrink-0 flex-col overflow-hidden bg-white text-sidebar-foreground transition-all duration-300 ${
+        mobile ? "w-full" : isCollapsed ? "w-20" : "w-64"
+      }`}
     >
-
-      {/* Header / Logo */}
-      <div className="flex items-center justify-between p-4 border-sidebar-border">
-        {!isCollapsed && (
+      <div className="flex items-center justify-between border-sidebar-border p-4">
+        {showLabels && (
           <span
             className="text-xl font-bold tracking-tight"
-            style={{ color: 'var(--sidebar-primary)' }}
+            style={{ color: "var(--sidebar-primary)" }}
           >
             Harbor Admin
           </span>
         )}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg cursor-pointer bg-sidebar-accent hover:bg-sidebar-primary transition-colors"
-        >
-          {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
-        </button>
+        {!mobile && (
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="cursor-pointer rounded-lg bg-sidebar-accent p-1.5 transition-colors hover:bg-sidebar-primary"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
+          </button>
+        )}
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex-1 px-3 mt-4 space-y-1">
+      <nav className="mt-4 flex-1 space-y-1 px-3">
         {menuItems.map((item, index) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={index}
               href={item.href}
-              className={`relative flex items-center gap-4 px-3 py-3 rounded-lg transition-colors group`
-                + (isActive
-                  ? ' bg-sidebar-primary text-sidebar-primary-foreground shadow'
-                  : ' hover:bg-sidebar-accent hover:text-sidebar-accent-foreground')
-              }
+              onClick={onNavigate}
+              className={`group relative flex items-center gap-4 rounded-lg px-3 py-3 transition-colors ${
+                isActive
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow"
+                  : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              }`}
             >
               <div className="min-w-5">{item.icon}</div>
-              {!isCollapsed && <span className="font-medium">{item.label}</span>}
-              {/* Tooltip for collapsed state */}
-              {isCollapsed && (
-                <div className="absolute z-50 px-2 py-1 text-xs transition-opacity duration-300 border rounded shadow opacity-0 pointer-events-none left-20 bg-sidebar text-sidebar-foreground group-hover:opacity-100 group-hover:text-white whitespace-nowrap border-sidebar-border">
+              {showLabels && <span className="font-medium">{item.label}</span>}
+              {!mobile && isCollapsed && (
+                <div className="pointer-events-none absolute left-20 z-50 whitespace-nowrap rounded border border-sidebar-border bg-sidebar px-2 py-1 text-xs text-sidebar-foreground opacity-0 shadow transition-opacity duration-300 group-hover:opacity-100">
                   {item.label}
                 </div>
               )}
@@ -79,17 +83,17 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <div className="p-4 border-t border-sidebar-border">
+      <div className="border-t border-sidebar-border p-4">
         <button
           onClick={async () => {
             const supabase = createClient();
             await supabase.auth.signOut();
-            router.push('/login');
+            router.push("/login");
           }}
-          className="flex items-center w-full gap-4 px-3 py-3 font-medium transition-colors duration-300 rounded-lg cursor-pointer group hover:bg-destructive hover:text-destructive-foreground"
+          className="group flex w-full cursor-pointer items-center gap-4 rounded-lg px-3 py-3 font-medium transition-colors duration-300 hover:bg-destructive hover:text-destructive-foreground"
         >
           <LogOut size={20} />
-          {!isCollapsed && <span className="font-medium">Logout</span>}
+          {showLabels && <span className="font-medium">Logout</span>}
         </button>
       </div>
     </div>

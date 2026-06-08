@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <main className="min-h-full bg-background p-6 md:p-8">
+    <main className="min-h-full bg-background p-4 sm:p-6 md:p-8">
       <div className="mx-auto max-w-6xl space-y-8">
         <section className="relative overflow-hidden rounded-3xl border border-border bg-card px-6 py-8 shadow-sm md:px-8">
           <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-primary/15 blur-3xl" />

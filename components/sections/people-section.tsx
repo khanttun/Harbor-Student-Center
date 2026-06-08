@@ -1,7 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import { SectionHeading } from "@/components/section-heading"
+import { ImageCard } from "@/components/image-card"
 import { motion } from "framer-motion"
 
 export function PeopleSection() {
@@ -21,23 +21,22 @@ export function PeopleSection() {
         </motion.div>
 
         <div className="mt-12 flex flex-col items-center">
-          {/* Shared Image */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative w-full max-w-4xl aspect-[16/10] sm:aspect-[16/9] rounded-3xl overflow-hidden shadow-2xl"
+            className="w-full max-w-4xl"
           >
-            <Image
+            <ImageCard
               src="/images/katrina-floyd.jpg"
               alt="Katrina and Floyd"
-              fill
-              className="object-cover transition-transform duration-700 hover:scale-105"
+              title="Katrina Trask Graham & Floyd S. Graham"
+              description="The coordinators behind The Harbor Student Center — opening their hearts and home to Myanmar students at Mae Fah Luang University."
+              className="aspect-[16/10] rounded-3xl shadow-2xl sm:aspect-[16/9]"
             />
           </motion.div>
 
-          {/* Combined Description */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

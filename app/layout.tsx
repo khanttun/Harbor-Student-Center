@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Poppins, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ScrollToTopButton } from '@/components/scroll-to-top-button'
@@ -18,6 +18,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'The Harbor Student Center | Mae Fah Luang University',
   description: 'A home away from home for Myanmar students at Mae Fah Luang University. Free food, events, and a welcoming community.',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

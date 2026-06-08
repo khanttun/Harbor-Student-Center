@@ -35,7 +35,7 @@ export function HeroSection() {
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
 
   return (
-    <section className="relative h-[80vh] min-h-[600px] w-full overflow-hidden">
+    <section className="relative h-[70svh] min-h-[420px] w-full overflow-hidden sm:min-h-[500px] md:min-h-[560px] lg:min-h-[600px]">
       {/* Slideshow */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -85,7 +85,7 @@ export function HeroSection() {
         >
           <Button 
             size="lg" 
-            className="rounded-full bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"
+            className="rounded-full bg-primary px-6 py-5 text-base font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 sm:px-8 sm:py-6 sm:text-lg"
             onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
           >
             Join Our Community
@@ -96,14 +96,14 @@ export function HeroSection() {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-white/30"
+        className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-white/30 sm:left-4 sm:p-2"
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-6 w-6" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-white/30"
+        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/20 p-1.5 text-white backdrop-blur-sm transition-all hover:bg-white/30 sm:right-4 sm:p-2"
         aria-label="Next slide"
       >
         <ChevronRight className="h-6 w-6" />

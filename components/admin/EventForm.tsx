@@ -229,7 +229,7 @@ export default function EventForm() {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={handleSubmit} className="p-6 space-y-6 border shadow-sm bg-card rounded-xl border-border">
+      <form onSubmit={handleSubmit} className="space-y-6 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
         <div className="space-y-4">
           <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Event Title" className="w-full p-3 border rounded-lg outline-none bg-background focus:ring-2 focus:ring-primary" required />
           <input value={date} onChange={e => setDate(e.target.value)} type="date" className="w-full p-3 border rounded-lg outline-none bg-background focus:ring-2 focus:ring-primary" required />

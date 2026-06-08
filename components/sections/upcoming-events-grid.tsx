@@ -129,7 +129,7 @@ export function UpcomingEventsGrid({ events }: UpcomingEventsGridProps) {
 
   return (
     <>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
         {events.map((event, index) => {
           const category = getEventCategory(event);
           const Icon = getCategoryIcon(category);
@@ -180,7 +180,7 @@ export function UpcomingEventsGrid({ events }: UpcomingEventsGridProps) {
                 </div>
 
                 <div
-                  className="flex items-center justify-between mt-4"
+                  className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={(e) => e.stopPropagation()}
                 >
