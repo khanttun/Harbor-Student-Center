@@ -10,11 +10,104 @@ function getClientIp(request: Request): string {
   return request.headers.get("x-real-ip") ?? "unknown";
 }
 
+async function requireAdminSession(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error || !data?.session) {
+    return null;
+  }
+
+  return data.session;
+}
+
+async function handleTogglePinned(request: Request) {
+  try {
+    const body = await request.json();
+    const noteId = typeof body.id === "string" ? body.id.trim() : "";
+
+    if (!noteId) {
+      return NextResponse.json({ error: "Note id is required." }, { status: 400 });
+    }
+
+    const supabase = await createClient();
+    const session = await requireAdminSession(supabase);
+
+    if (!session) {
+      return NextResponse.json({ error: "Admin authentication required." }, { status: 401 });
+    }
+
+    const { data: existingNote, error: selectError } = await supabase
+      .from("kindness_notes")
+      .select("is_pinned")
+      .eq("id", noteId)
+      .single();
+
+    if (selectError || !existingNote) {
+      return NextResponse.json({ error: "Note not found." }, { status: 404 });
+    }
+
+    const { error: updateError } = await supabase
+      .from("kindness_notes")
+      .update({ is_pinned: !existingNote.is_pinned })
+      .eq("id", noteId);
+
+    if (updateError) {
+      console.error("Failed to update pinned status:", updateError.message);
+      return NextResponse.json({ error: "Failed to update pinned status." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, id: noteId, is_pinned: !existingNote.is_pinned });
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const studentName = typeof body.studentName === "string" ? body.studentName.trim() : "";
     const message = typeof body.message === "string" ? body.message.trim() : "";
+    const parentId = typeof body.parent_id === "string" ? body.parent_id.trim() : null;
+
+    const supabase = await createClient();
+
+    if (parentId) {
+      const session = await requireAdminSession(supabase);
+
+      if (!session) {
+        return NextResponse.json({ error: "Admin authentication required." }, { status: 401 });
+      }
+
+      if (!message) {
+        return NextResponse.json({ error: "Message is required for replies." }, { status: 400 });
+      }
+
+      const { data: parentNote, error: parentError } = await supabase
+        .from("kindness_notes")
+        .select("id")
+        .eq("id", parentId)
+        .single();
+
+      if (parentError || !parentNote) {
+        return NextResponse.json({ error: "Parent note not found." }, { status: 404 });
+      }
+
+      const { error } = await supabase.from("kindness_notes").insert([
+        {
+          student_name: "Admin",
+          message,
+          parent_id: parentId,
+          ip_address: null,
+        },
+      ]);
+
+      if (error) {
+        console.error("Failed to submit admin reply:", error.message);
+        return NextResponse.json({ error: "Failed to submit admin reply." }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true }, { status: 201 });
+    }
 
     if (!studentName || !message) {
       return NextResponse.json({ error: "Student name and message are required." }, { status: 400 });
@@ -24,7 +117,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Message is too long." }, { status: 400 });
     }
 
-    const supabase = await createClient();
     const ipAddress = getClientIp(request);
 
     let { error } = await supabase.from("kindness_notes").insert([
@@ -66,4 +158,12 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
+}
+
+export async function PUT(request: Request) {
+  return handleTogglePinned(request);
+}
+
+export async function PATCH(request: Request) {
+  return handleTogglePinned(request);
 }

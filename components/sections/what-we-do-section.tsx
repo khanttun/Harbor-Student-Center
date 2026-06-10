@@ -9,12 +9,12 @@ const features = [
   {
     icon: Calendar,
     title: "Weekly Hangout",
-    description: "Tuesday to Thursday, our space is open for you to relax, cook, study, and spend quality time together with fellow students.",
+    description: "Tuesday-Thursday from 3:00-7:00 pm, unless otherwise specified. Our space for you to relax, cook, study, and spend quality time together.",
   },
   {
     icon: UtensilsCrossed,
     title: "Saturday Meals",
-    description: "Every Saturday, we provide free large meals at a local restaurant. Come hungry, leave happy!",
+    description: "Every Saturday from 3:00-5:30 pm, we provide free large meals at a local restaurant. Come hungry, leave happy!",
   },
   {
     icon: PartyPopper,

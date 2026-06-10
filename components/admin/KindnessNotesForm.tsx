@@ -10,9 +10,10 @@ type KindnessNoteRecord = {
   message: string;
   created_at: string;
   ip_address: string | null;
+  is_pinned: boolean;
 };
 
-function getDatabaseErrorMessage(action: "load" | "delete", errorMessage: string) {
+function getDatabaseErrorMessage(action: "load" | "delete" | "pin" | "reply", errorMessage: string) {
   const normalizedMessage = errorMessage.toLowerCase();
 
   if (normalizedMessage.includes("row-level security")) {
@@ -31,6 +32,9 @@ export default function KindnessNotesForm() {
   const [notes, setNotes] = useState<KindnessNoteRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pinningId, setPinningId] = useState<string | null>(null);
+  const [replyingId, setReplyingId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export default function KindnessNotesForm() {
   async function loadNotes() {
     const { data, error } = await supabase
       .from("kindness_notes")
-      .select("id, student_name, message, created_at, ip_address")
+      .select("id, student_name, message, created_at, ip_address, is_pinned")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -88,6 +92,57 @@ export default function KindnessNotesForm() {
     }
 
     setDeletingId(null);
+  }
+
+  async function handleTogglePin(noteId: string) {
+    setPinningId(noteId);
+    setMessage("");
+
+    const response = await fetch("/api/kindness-notes", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: noteId }),
+    });
+
+    const result = await response.json();
+    setPinningId(null);
+
+    if (!response.ok) {
+      setMessage(getDatabaseErrorMessage("pin", result.error ?? "Failed to update pin status."));
+      return;
+    }
+
+    setMessage(result.is_pinned ? "Message pinned." : "Message unpinned.");
+    await loadNotes();
+  }
+
+  async function handleReply(noteId: string) {
+    const reply = replyText[noteId]?.trim() ?? "";
+    if (!reply) {
+      setMessage("Reply content is required.");
+      return;
+    }
+
+    setReplyingId(noteId);
+    setMessage("");
+
+    const response = await fetch("/api/kindness-notes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ parent_id: noteId, message: reply }),
+    });
+
+    const result = await response.json();
+    setReplyingId(null);
+
+    if (!response.ok) {
+      setMessage(getDatabaseErrorMessage("reply", result.error ?? "Failed to post reply."));
+      return;
+    }
+
+    setReplyText((current) => ({ ...current, [noteId]: "" }));
+    setMessage("Reply posted successfully.");
+    await loadNotes();
   }
 
   return (
@@ -153,27 +208,69 @@ export default function KindnessNotesForm() {
             notes.map((note) => (
               <div
                 key={note.id}
-                className="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
+                className="space-y-4 rounded-xl border border-border bg-background p-4 transition-colors hover:bg-muted/30"
               >
-                <div className="space-y-2">
-                  <h4 className="text-lg font-semibold text-foreground">{note.student_name}</h4>
-                  <p className="text-sm leading-relaxed text-muted-foreground">&ldquo;{note.message}&rdquo;</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                    <p>Posted {new Date(note.created_at).toLocaleString()}</p>
-                    {note.ip_address && <p>IP: {note.ip_address}</p>}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="text-lg font-semibold text-foreground">{note.student_name}</h4>
+                      {note.is_pinned ? (
+                        <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                          Pinned
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">&ldquo;{note.message}&rdquo;</p>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <p>Posted {new Date(note.created_at).toLocaleString()}</p>
+                      {note.ip_address && <p>IP: {note.ip_address}</p>}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void handleTogglePin(note.id)}
+                      disabled={pinningId === note.id}
+                      className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary/5 px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {pinningId === note.id ? "Updating..." : note.is_pinned ? "Unpin" : "Pin"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleDelete(note.id, note.student_name)}
+                      disabled={deletingId === note.id}
+                      className="inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-50"
+                      aria-label={`Take down message from ${note.student_name}`}
+                    >
+                      <Trash2 size={16} />
+                      {deletingId === note.id ? "Removing..." : "Take Down"}
+                    </button>
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => void handleDelete(note.id, note.student_name)}
-                  disabled={deletingId === note.id}
-                  className="inline-flex shrink-0 items-center gap-2 self-start rounded-lg px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label={`Take down message from ${note.student_name}`}
-                >
-                  <Trash2 size={16} />
-                  {deletingId === note.id ? "Removing..." : "Take Down"}
-                </button>
+                <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+                  <label className="sr-only" htmlFor={`reply-${note.id}`}>
+                    Reply to note
+                  </label>
+                  <input
+                    id={`reply-${note.id}`}
+                    value={replyText[note.id] ?? ""}
+                    onChange={(event) =>
+                      setReplyText((current) => ({ ...current, [note.id]: event.target.value }))
+                    }
+                    placeholder="Write an official reply..."
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => void handleReply(note.id)}
+                    disabled={replyingId === note.id}
+                    className="inline-flex items-center justify-center rounded-lg bg-secondary px-4 py-2 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {replyingId === note.id ? "Replying..." : "Reply"}
+                  </button>
+                </div>
               </div>
             ))
           )}

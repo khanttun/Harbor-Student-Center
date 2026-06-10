@@ -52,7 +52,7 @@ export function UpcomingEventSection() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-              Weekend Activity (Unless Said Otherwise)
+              Weekend Activity (Unless Otherwise Specified)
             </span>
             
             <h2 
