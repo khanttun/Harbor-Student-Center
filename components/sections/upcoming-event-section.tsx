@@ -107,7 +107,7 @@ export function UpcomingEventSection() {
                 Saturday Lunch at TROIS MONTS Restaurant
               </DialogTitle>
               <p className="text-sm font-medium text-foreground">
-                Saturday, March 29, 2026 · 3:00 PM – 6:00 PM · TROIS MONTS Restaurant, Chiang Rai
+                Saturday, March 29, 2026 · 3:00 PM – 5:30 PM · TROIS MONTS Restaurant, Chiang Rai
               </p>
               <DialogDescription className="sr-only">
                 Large photo of Saturday lunch gathering
