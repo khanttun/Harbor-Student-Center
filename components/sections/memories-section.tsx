@@ -97,7 +97,7 @@ export function MemoriesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          className="mb-10 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-3 lg:gap-4"
         >
           {memories.map((memory, index) => (
             <motion.button 
@@ -108,7 +108,7 @@ export function MemoriesSection() {
               aria-haspopup="dialog"
               aria-label={`Open larger view: ${memory.alt}`}
               className={`group relative overflow-hidden rounded-2xl text-left outline-offset-4 focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring ${
-                index === 0 ? "sm:col-span-2 sm:row-span-2 aspect-square" : "aspect-square"
+                index === 0 ? "col-span-2 row-span-2 aspect-square" : "aspect-square"
               }`}
             >
               <Image
@@ -118,8 +118,8 @@ export function MemoriesSection() {
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                <p className="text-sm font-medium text-white">{memory.alt}</p>
+              <div className="absolute bottom-3 left-3 right-3 translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-4 sm:left-4 sm:right-4">
+                <p className="text-[11px] font-medium text-white sm:text-sm">{memory.alt}</p>
               </div>
             </motion.button>
           ))}

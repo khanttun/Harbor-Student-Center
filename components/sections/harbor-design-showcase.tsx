@@ -15,7 +15,7 @@ const spaces = [
     src: "/Design/front-room.png",
     title: "Main Lounge",
     blurb: "Comfy seating, soft lighting, and room for everyone to gather.",
-    className: "sm:col-span-2 sm:row-span-2 lg:col-span-2 lg:row-span-2",
+    className: "col-span-2 row-span-2",
   },
   {
     src: "/Design/main-lounge.png",
@@ -68,18 +68,18 @@ export function HarborDesignShowcase() {
     <section className="bg-background py-20 sm:py-28">
       <div className="container mx-auto px-4">
         <div className="mx-auto mb-10 max-w-3xl text-center">
-          <p className="mb-3 inline-flex rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+          <p className="mb-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
             Welcome Home
           </p>
-          <h2 className="text-3xl font-bold text-foreground sm:text-4xl" style={{ fontFamily: "var(--font-heading)" }}>
+          <h2 className="text-2xl font-bold text-foreground sm:text-3xl md:text-4xl" style={{ fontFamily: "var(--font-heading)" }}>
             Explore The Harbor Spaces We Built For You
           </h2>
-          <p className="mt-4 text-base text-muted-foreground sm:text-lg">
+          <p className="mt-4 text-sm text-muted-foreground sm:text-base">
             Inspired by modern realtor-style layouts, this is a quick tour of what we have: cozy lounges, study zones, shared dining, and activity spaces designed to help students feel at home.
           </p>
         </div>
 
-        <div className="grid auto-rows-[160px] gap-3 sm:auto-rows-[180px] sm:grid-cols-2 sm:gap-4 md:auto-rows-[200px] lg:grid-cols-4">
+        <div className="grid grid-cols-2 auto-rows-[120px] gap-2 sm:grid-cols-2 sm:auto-rows-[150px] sm:gap-3 md:grid-cols-4 md:auto-rows-[180px] lg:auto-rows-[200px] lg:gap-4">
           {spaces.map((space, index) => (
             <button
               key={space.src}
@@ -97,9 +97,9 @@ export function HarborDesignShowcase() {
                 sizes={index === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 25vw"}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <h3 className="text-base font-semibold text-white sm:text-lg">{space.title}</h3>
-                <p className="mt-1 text-xs text-white/85 sm:text-sm">{space.blurb}</p>
+              <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                <h3 className="text-sm font-semibold text-white sm:text-base">{space.title}</h3>
+                <p className="mt-1 text-[11px] text-white/85 sm:text-xs">{space.blurb}</p>
               </div>
             </button>
           ))}

@@ -52,7 +52,7 @@ export function UpcomingEventSection() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-              Upcoming Event
+              Weekend Activity (Unless Said Otherwise)
             </span>
             
             <h2 
@@ -79,7 +79,7 @@ export function UpcomingEventSection() {
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-base font-medium sm:text-lg">3:00 PM - 6:00 PM</span>
+                  <span className="text-base font-medium sm:text-lg">3:00 PM - 5:30 PM</span>
                 </div>
                 <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
