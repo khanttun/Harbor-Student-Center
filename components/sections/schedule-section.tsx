@@ -12,7 +12,7 @@ const scheduleItems: {
   {
     days: "Tuesday – Thursday",
     title: "Open Student Center",
-    description: "Come relax, cook, study, or hang out together",
+    description: "Come relax, cook, study, enjoy free snacks and drinks, sing, play guitar, piano, cajon, watch TV or Karaoke, play pool, pingpong, or air hockey!",
     icon: Home,
     location: "The Harbor",
     mapLink: "https://www.google.com/maps/search/?api=1&query=The+Harbor+Student+Center",

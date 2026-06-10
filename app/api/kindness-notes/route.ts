@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
 
 function getClientIp(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -20,15 +21,27 @@ async function requireAdminSession(supabase: Awaited<ReturnType<typeof createCli
   return data.session;
 }
 
+function getAdminSupabaseClient() {
+  const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+
+  if (!serviceRoleKey) {
+    console.warn("⚠️ SUPABASE_SERVICE_ROLE_KEY not configured. Admin operations may fail.");
+  }
+
+  return createServiceClient(supabaseUrl, serviceRoleKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "");
+}
+
 async function handleTogglePinned(request: Request) {
   try {
     const body = await request.json();
     const noteId = typeof body.id === "string" ? body.id.trim() : "";
 
     if (!noteId) {
-      return NextResponse.json({ error: "Note id is required." }, { status: 400 });
+      return NextResponse.json({ error: "Missing note ID" }, { status: 400 });
     }
 
+    // Verify admin session
     const supabase = await createClient();
     const session = await requireAdminSession(supabase);
 
@@ -36,19 +49,28 @@ async function handleTogglePinned(request: Request) {
       return NextResponse.json({ error: "Admin authentication required." }, { status: 401 });
     }
 
-    const { data: existingNote, error: selectError } = await supabase
+    // Use admin client for database operations to bypass RLS
+    const adminSupabase = getAdminSupabaseClient();
+
+    // 1. Fetch current note status
+    const { data: note, error: fetchError } = await adminSupabase
       .from("kindness_notes")
       .select("is_pinned")
       .eq("id", noteId)
       .single();
 
-    if (selectError || !existingNote) {
+    if (fetchError || !note) {
+      console.error("Failed to fetch note:", fetchError?.message || "Note not found");
       return NextResponse.json({ error: "Note not found." }, { status: 404 });
     }
 
-    const { error: updateError } = await supabase
+    // 2. Toggle the pinned state
+    const nextPinnedState = !note.is_pinned;
+
+    // 3. Update the database row
+    const { error: updateError } = await adminSupabase
       .from("kindness_notes")
-      .update({ is_pinned: !existingNote.is_pinned })
+      .update({ is_pinned: nextPinnedState })
       .eq("id", noteId);
 
     if (updateError) {
@@ -56,9 +78,10 @@ async function handleTogglePinned(request: Request) {
       return NextResponse.json({ error: "Failed to update pinned status." }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, id: noteId, is_pinned: !existingNote.is_pinned });
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    return NextResponse.json({ success: true, id: noteId, is_pinned: nextPinnedState });
+  } catch (err: any) {
+    console.error("Error in handleTogglePinned:", err.message);
+    return NextResponse.json({ error: err.message || "Invalid request." }, { status: 400 });
   }
 }
 

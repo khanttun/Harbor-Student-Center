@@ -73,7 +73,7 @@ export function UpcomingEventSection() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                     <CalendarDays className="h-5 w-5 text-primary" />
                   </div>
-                  <span className="text-base font-medium sm:text-lg">Saturday, March 29, 2026</span>
+                  <span className="text-base font-medium sm:text-lg">Saturday</span>
                 </div>
                 <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">

@@ -9,6 +9,8 @@ interface KindnessNote {
   student_name: string;
   message: string;
   created_at: string;
+  is_pinned: boolean;
+  parent_id: string | null;
 }
 
 function isSupabaseConfigured(): boolean {
@@ -52,7 +54,7 @@ export function KindnessNotesSection() {
       try {
         const { data, error } = await supabase
           .from("kindness_notes")
-          .select("id, student_name, message, created_at")
+          .select("id, student_name, message, created_at, is_pinned, parent_id")
           .order("created_at", { ascending: false });
 
         if (error) {
@@ -61,7 +63,16 @@ export function KindnessNotesSection() {
           return;
         }
 
-        setNotes((data as KindnessNote[]) ?? []);
+        const allNotes = (data as KindnessNote[]) ?? [];
+        
+        // Sort: pinned notes first, then by created_at descending
+        const sortedNotes = allNotes.sort((a, b) => {
+          if (a.is_pinned && !b.is_pinned) return -1;
+          if (!a.is_pinned && b.is_pinned) return 1;
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
+
+        setNotes(sortedNotes);
       } catch (error) {
         console.error("Failed to fetch kindness notes:", error);
         setNotes([]);
@@ -189,10 +200,16 @@ export function KindnessNotesSection() {
                         </time>
                       </div>
 
-                      {/* Decorative hearts in corner */}
-                      <div className="text-rose-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <Heart className="w-5 h-5 fill-current" />
-                      </div>
+                      {/* Heart badge - filled if pinned, outline if not */}
+                      {notes[currentSlide].is_pinned ? (
+                        <div className="text-rose-500">
+                          <Heart className="w-5 h-5 fill-rose-500" />
+                        </div>
+                      ) : (
+                        <div className="text-muted-foreground/40 group-hover:text-rose-400 transition-colors duration-300">
+                          <Heart className="w-5 h-5" />
+                        </div>
+                      )}
                     </div>
 
                     {/* Message */}
@@ -307,10 +324,16 @@ export function KindnessNotesSection() {
                             </div>
                           </div>
 
-                          {/* Decorative hearts in corner */}
-                          <div className="text-rose-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Heart className="w-4 h-4 fill-current" />
-                          </div>
+                          {/* Heart badge - filled if pinned, outline if not */}
+                          {note.is_pinned ? (
+                            <div className="text-rose-500">
+                              <Heart className="w-4 h-4 fill-rose-500" />
+                            </div>
+                          ) : (
+                            <div className="text-muted-foreground/40 group-hover:text-rose-400 transition-colors duration-300">
+                              <Heart className="w-4 h-4" />
+                            </div>
+                          )}
                         </div>
 
                         {/* Message */}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Heart, AlertCircle, CheckCircle2, Trash2, ShieldAlert } from "lucide-react";
+import { Heart, AlertCircle, CheckCircle2, Trash2, ShieldAlert, Pin } from "lucide-react";
 
 type KindnessNoteRecord = {
   id: string;
@@ -112,7 +112,7 @@ export default function KindnessNotesForm() {
       return;
     }
 
-    setMessage(result.is_pinned ? "Message pinned." : "Message unpinned.");
+    setMessage(result.is_pinned ? "Message pinned." : "the message is unpinned");
     await loadNotes();
   }
 
@@ -228,14 +228,30 @@ export default function KindnessNotesForm() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => void handleTogglePin(note.id)}
-                      disabled={pinningId === note.id}
-                      className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary/5 px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {pinningId === note.id ? "Updating..." : note.is_pinned ? "Unpin" : "Pin"}
-                    </button>
+                    {note.is_pinned ? (
+                      <button
+                        type="button"
+                        onClick={() => void handleTogglePin(note.id)}
+                        disabled={pinningId === note.id}
+                        className="group inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-destructive hover:text-destructive-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <Pin size={16} />
+                        <span className="group-hover:hidden">
+                          {pinningId === note.id ? "Updating..." : "Pinned"}
+                        </span>
+                        <span className="hidden group-hover:inline">Unpin</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => void handleTogglePin(note.id)}
+                        disabled={pinningId === note.id}
+                        className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary/5 px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <Pin size={16} />
+                        {pinningId === note.id ? "Updating..." : "Pin"}
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => void handleDelete(note.id, note.student_name)}
