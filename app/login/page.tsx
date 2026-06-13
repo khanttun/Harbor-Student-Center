@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
         </button>
 
         <div className="text-center text-muted-foreground text-sm pt-2">
-          Contact support if you've forgotten your access.
+          Contact support if you&apos;ve forgotten your access.
         </div>
       </form>
     </main>

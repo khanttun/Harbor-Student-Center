@@ -84,7 +84,7 @@ function TimelineMemoryNode({
 
   const node = (
     <div
-      className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-green-400 to-green-600 shadow-md ring-2 ring-green-200/70"
+      className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/80 to-primary shadow-md ring-2 ring-primary/20"
       aria-hidden
     >
       <Leaf className="h-4 w-4 text-white" />
@@ -102,7 +102,7 @@ function TimelineMemoryNode({
           <div className="min-h-0" />
           <div className="flex justify-center">{node}</div>
           <div className="flex min-w-0 flex-col items-center justify-end gap-0 pb-1">
-            <div className="h-10 w-0.5 shrink-0 rounded-full bg-linear-to-b from-green-400 to-green-500" />
+            <div className="h-10 w-0.5 shrink-0 rounded-full bg-linear-to-b from-primary/60 to-primary" />
             {card}
           </div>
         </>
@@ -110,7 +110,7 @@ function TimelineMemoryNode({
         <>
           <div className="flex min-w-0 flex-col items-center justify-start gap-0 pt-1">
             {card}
-            <div className="h-10 w-0.5 shrink-0 rounded-full bg-linear-to-t from-green-400 to-green-500" />
+            <div className="h-10 w-0.5 shrink-0 rounded-full bg-linear-to-t from-primary/60 to-primary" />
           </div>
           <div className="flex justify-center">{node}</div>
           <div className="min-h-0" />
@@ -142,7 +142,7 @@ export function TimelineTreeScroll({ timelineItems }: TimelineTreeScrollProps) {
       >
         <div className="relative mx-auto min-w-max px-4 py-3 sm:px-8 md:px-12 md:py-4">
           <div
-            className="pointer-events-none absolute left-4 right-4 top-1/2 h-1 -translate-y-1/2 rounded-full bg-linear-to-r from-amber-600 via-green-500 to-green-400 shadow-sm sm:left-8 sm:right-8 md:left-12 md:right-12"
+            className="pointer-events-none absolute left-4 right-4 top-1/2 h-1 -translate-y-1/2 rounded-full bg-linear-to-r from-amber-600 via-primary/70 to-primary shadow-sm sm:left-8 sm:right-8 md:left-12 md:right-12"
             aria-hidden
           />
           <div
@@ -151,7 +151,7 @@ export function TimelineTreeScroll({ timelineItems }: TimelineTreeScrollProps) {
             <div
               className={`flex shrink-0 flex-col items-center justify-center gap-1 pr-2 sm:pr-3 ${timelineColumnClass}`}
             >
-              <div className="rounded-full bg-linear-to-br from-green-500 to-green-700 p-2.5 shadow-md ring-2 ring-green-200/50">
+              <div className="rounded-full bg-linear-to-br from-primary/80 to-primary p-2.5 shadow-md ring-2 ring-primary/20">
                 <TreeDeciduous className="h-6 w-6 text-white" />
               </div>
               <span
@@ -177,7 +177,7 @@ export function TimelineTreeScroll({ timelineItems }: TimelineTreeScrollProps) {
             <div
               className={`flex shrink-0 flex-col items-center justify-center gap-1 pl-2 sm:pl-3 ${timelineColumnClass}`}
             >
-              <div className="h-9 w-9 rounded-full border-2 border-dashed border-green-400/80 bg-background/80" />
+              <div className="h-9 w-9 rounded-full border-2 border-dashed border-primary/60 bg-background/80" />
               <span
                 className="max-w-[4.5rem] text-center text-[10px] font-semibold text-muted-foreground sm:text-xs"
                 style={{ fontFamily: "var(--font-heading)" }}

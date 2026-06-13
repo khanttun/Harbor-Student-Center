@@ -2,16 +2,9 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { ImagePreviewDialog, type ImagePreviewItem } from "@/components/image-preview-dialog"
 import { SectionHeading } from "@/components/section-heading"
 import { motion } from "framer-motion"
 
@@ -23,6 +16,12 @@ const memories = [
   { src: "/images/memory-5.jpg", alt: "Community gathering" },
   { src: "/images/memory-6.jpg", alt: "Students having fun" },
 ]
+
+const previewItems: ImagePreviewItem[] = memories.map((m) => ({
+  src: m.src,
+  alt: m.alt,
+  title: m.alt,
+}))
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -47,41 +46,6 @@ const itemVariants = {
 
 export function MemoriesSection() {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null)
-  const count = memories.length
-  const preview =
-    previewIndex !== null && previewIndex >= 0 ? memories[previewIndex] ?? null : null
-
-  const goPrev = useCallback(() => {
-    setPreviewIndex((i) => {
-      if (i === null || count <= 1) return i
-      return (i - 1 + count) % count
-    })
-  }, [count])
-
-  const goNext = useCallback(() => {
-    setPreviewIndex((i) => {
-      if (i === null || count <= 1) return i
-      return (i + 1) % count
-    })
-  }, [count])
-
-  useEffect(() => {
-    if (previewIndex === null || count === 0) return
-
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "ArrowLeft") {
-        e.preventDefault()
-        setPreviewIndex((i) => (i === null || count <= 1 ? i : (i - 1 + count) % count))
-      }
-      if (e.key === "ArrowRight") {
-        e.preventDefault()
-        setPreviewIndex((i) => (i === null || count <= 1 ? i : (i + 1) % count))
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [previewIndex, count])
 
   return (
     <section className="bg-background py-24 sm:py-32">
@@ -92,7 +56,7 @@ export function MemoriesSection() {
         />
 
         {/* Photo Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -100,7 +64,7 @@ export function MemoriesSection() {
           className="mb-10 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-3 lg:gap-4"
         >
           {memories.map((memory, index) => (
-            <motion.button 
+            <motion.button
               key={memory.src}
               type="button"
               variants={itemVariants}
@@ -117,7 +81,7 @@ export function MemoriesSection() {
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="absolute bottom-3 left-3 right-3 translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:bottom-4 sm:left-4 sm:right-4">
                 <p className="text-[11px] font-medium text-white sm:text-sm">{memory.alt}</p>
               </div>
@@ -125,81 +89,25 @@ export function MemoriesSection() {
           ))}
         </motion.div>
 
-        <Dialog
+        <ImagePreviewDialog
+          item={previewIndex !== null ? previewItems[previewIndex] ?? null : null}
           open={previewIndex !== null}
-          onOpenChange={(open) => {
-            if (!open) {
-              setPreviewIndex(null)
-            }
-          }}
-        >
-          <DialogContent className="max-h-[calc(100dvh-3rem)] w-[calc(100%-1.25rem)] max-w-4xl overflow-hidden p-0 gap-0 sm:p-0">
-            {preview && previewIndex !== null && (
-              <>
-                <DialogHeader className="gap-3 border-b border-border bg-muted/30 px-5 py-4 text-left">
-                  <div className="flex flex-wrap items-start justify-between gap-2 gap-y-2">
-                    <DialogTitle
-                      style={{ fontFamily: "var(--font-heading)" }}
-                      className="text-xl sm:text-2xl pr-8"
-                    >
-                      {preview.alt}
-                    </DialogTitle>
-                  </div>
-                  <DialogDescription className="sr-only">
-                    Community memory photo. Use arrow keys or on-screen arrows to browse photos.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="relative aspect-square w-full max-h-[72dvh] bg-black">
-                  {count > 1 ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          goPrev()
-                        }}
-                        aria-label="Previous photo"
-                        className="absolute left-2 top-1/2 z-10 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/75 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60 sm:left-4 sm:size-12"
-                      >
-                        <ChevronLeft className="size-6" aria-hidden />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          goNext()
-                        }}
-                        aria-label="Next photo"
-                        className="absolute right-2 top-1/2 z-10 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/75 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60 sm:right-4 sm:size-12"
-                      >
-                        <ChevronRight className="size-6" aria-hidden />
-                      </button>
-                    </>
-                  ) : null}
-                  <Image
-                    src={preview.src}
-                    alt=""
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 896px) 100vw, 896px"
-                    priority={false}
-                  />
-                </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+          onOpenChange={(open) => { if (!open) setPreviewIndex(null) }}
+          items={previewItems}
+          currentIndex={previewIndex ?? 0}
+          onNavigate={setPreviewIndex}
+        />
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.4 }}
           className="text-center"
         >
-          <Button 
+          <Button
             asChild
-            size="lg" 
+            size="lg"
             variant="outline"
             className="rounded-full border-primary px-10 text-primary transition-all hover:bg-primary hover:text-primary-foreground"
           >

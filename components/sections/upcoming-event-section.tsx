@@ -5,17 +5,13 @@ import Image from "next/image"
 import { CalendarDays, Clock, MapPin } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Card, CardContent } from "@/components/ui/card"
+import { ImagePreviewDialog } from "@/components/image-preview-dialog"
 import { motion } from "framer-motion"
 
 const SPOTLIGHT_IMAGE_SRC = "/images/event.jpg"
+const SPOTLIGHT_TITLE = "Saturday Lunch at TROIS MONTS Restaurant"
+const SPOTLIGHT_META = "Saturday · 3:00 PM – 5:30 PM · TROIS MONTS Restaurant, Chiang Rai"
 
 export function UpcomingEventSection() {
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -54,16 +50,16 @@ export function UpcomingEventSection() {
             <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
               Weekend Activity (Unless Otherwise Specified)
             </span>
-            
-            <h2 
+
+            <h2
               className="mb-6 text-2xl font-bold text-foreground sm:text-4xl md:text-5xl text-balance"
-              style={{ fontFamily: 'var(--font-heading)' }}
+              style={{ fontFamily: "var(--font-heading)" }}
             >
-              Saturday Lunch at TROIS MONTS Restaurant
+              {SPOTLIGHT_TITLE}
             </h2>
-            
+
             <p className="mb-8 text-base text-muted-foreground leading-relaxed sm:text-xl">
-              Join us for a delicious meal with your fellow Myanmar students! Great food, great company, 
+              Join us for a delicious meal with your fellow Myanmar students! Great food, great company,
               and everything is completely free. New students are especially welcome.
             </p>
 
@@ -90,9 +86,9 @@ export function UpcomingEventSection() {
               </CardContent>
             </Card>
 
-            <Button 
+            <Button
               asChild
-              size="lg" 
+              size="lg"
               className="w-full rounded-full bg-primary px-6 py-5 text-base font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 sm:w-auto sm:px-10 sm:py-7 sm:text-lg"
             >
               <Link href="/events">View All Events</Link>
@@ -100,35 +96,16 @@ export function UpcomingEventSection() {
           </motion.div>
         </div>
 
-        <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-          <DialogContent className="max-h-[calc(100dvh-3rem)] w-[calc(100%-1.25rem)] max-w-4xl overflow-hidden p-0 gap-0 sm:p-0">
-            <DialogHeader className="gap-2 border-b border-border bg-muted/30 px-5 py-4 text-left">
-              <DialogTitle style={{ fontFamily: "var(--font-heading)" }} className="text-xl sm:text-2xl">
-                Saturday Lunch at TROIS MONTS Restaurant
-              </DialogTitle>
-              <p className="text-sm font-medium text-foreground">
-                Saturday, March 29, 2026 · 3:00 PM – 5:30 PM · TROIS MONTS Restaurant, Chiang Rai
-              </p>
-              <DialogDescription className="sr-only">
-                Large photo of Saturday lunch gathering
-              </DialogDescription>
-            </DialogHeader>
-            <div className="relative aspect-video w-full max-h-[72dvh] bg-black">
-              <Image
-                src={SPOTLIGHT_IMAGE_SRC}
-                alt=""
-                fill
-                className="object-contain"
-                sizes="(max-width: 896px) 100vw, 896px"
-              />
-            </div>
-            <div className="flex justify-end border-t border-border bg-muted/20 px-5 py-3">
-              <Button asChild variant="outline" size="sm" className="rounded-full">
-                <Link href="/events">See more events</Link>
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ImagePreviewDialog
+          item={{
+            src: SPOTLIGHT_IMAGE_SRC,
+            alt: SPOTLIGHT_TITLE,
+            title: SPOTLIGHT_TITLE,
+            description: SPOTLIGHT_META,
+          }}
+          open={previewOpen}
+          onOpenChange={setPreviewOpen}
+        />
       </div>
     </section>
   )

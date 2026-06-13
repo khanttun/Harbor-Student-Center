@@ -54,17 +54,12 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    if (latestAnnouncement !== undefined) {
-      setAnnouncement(latestAnnouncement);
-      setLoading(false);
-      return;
-    }
+    // Initial state already reflects latestAnnouncement; skip fetch when it was provided by SSR
+    if (latestAnnouncement !== undefined) return;
 
     // Skip fetching if Supabase isn't configured
-    if (!isSupabaseConfigured()) {
-      setLoading(false);
-      return;
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!isSupabaseConfigured()) { setLoading(false); return; }
 
     async function loadLatestAnnouncement() {
       try {

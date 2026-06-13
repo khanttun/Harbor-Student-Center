@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart, MessageCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ShieldAlert } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 interface KindnessNote {
@@ -11,16 +11,15 @@ interface KindnessNote {
   created_at: string;
   is_pinned: boolean;
   parent_id: string | null;
+  love_count: number;
 }
+
+const LIKED_NOTES_KEY = "harbor_liked_notes";
 
 function isSupabaseConfigured(): boolean {
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
   const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
-
-  if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") {
-    return false;
-  }
-
+  if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") return false;
   return true;
 }
 
@@ -28,11 +27,47 @@ function LeaveNoteButton() {
   return (
     <a
       href="/contact#leave-a-note"
-      className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-6 py-3 font-semibold text-white shadow-lg transition-colors duration-200 hover:bg-rose-600 hover:shadow-xl"
+      className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-lg transition-colors duration-200 hover:bg-primary/90 hover:shadow-xl"
     >
-      <Heart className="h-5 w-5" />
+      <Heart className="h-5 w-5 fill-rose-400 text-rose-400" />
       Leave a Note of Kindness
     </a>
+  );
+}
+
+function LoveButton({
+  note,
+  liked,
+  onToggle,
+  size = "md",
+}: {
+  note: KindnessNote;
+  liked: boolean;
+  onToggle: (note: KindnessNote) => void;
+  size?: "sm" | "md";
+}) {
+  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const count = note.love_count ?? 0;
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => { e.stopPropagation(); onToggle(note); }}
+      aria-label={liked ? "Remove love reaction" : "Love this note"}
+      aria-pressed={liked}
+      className={`group/love flex items-center gap-1.5 rounded-full px-2.5 py-1 transition-all duration-200 ${liked
+          ? "bg-rose-100 text-rose-500 dark:bg-rose-900/40 dark:text-rose-400"
+          : "text-muted-foreground/50 hover:bg-rose-50 hover:text-rose-400 dark:hover:bg-rose-900/20"
+        }`}
+    >
+      <Heart
+        className={`${iconClass} transition-transform duration-200 group-hover/love:scale-110 ${liked ? "fill-rose-500 text-rose-500 dark:fill-rose-400 dark:text-rose-400" : ""
+          }`}
+      />
+      {count > 0 && (
+        <span className="text-xs font-semibold tabular-nums">{count}</span>
+      )}
+    </button>
   );
 }
 
@@ -41,6 +76,16 @@ export function KindnessNotesSection() {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [likedNotes, setLikedNotes] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(LIKED_NOTES_KEY);
+      if (stored) setLikedNotes(new Set(JSON.parse(stored) as string[]));
+    } catch {
+      // ignore parse errors
+    }
+  }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -54,7 +99,7 @@ export function KindnessNotesSection() {
       try {
         const { data, error } = await supabase
           .from("kindness_notes")
-          .select("id, student_name, message, created_at, is_pinned, parent_id")
+          .select("id, student_name, message, created_at, is_pinned, parent_id, love_count")
           .order("created_at", { ascending: false });
 
         if (error) {
@@ -63,18 +108,20 @@ export function KindnessNotesSection() {
           return;
         }
 
-        const allNotes = (data as KindnessNote[]) ?? [];
-        
-        // Sort: pinned notes first, then by created_at descending
-        const sortedNotes = allNotes.sort((a, b) => {
+        const allNotes = ((data as KindnessNote[]) ?? []).map((n) => ({
+          ...n,
+          love_count: n.love_count ?? 0,
+        }));
+
+        const sorted = allNotes.sort((a, b) => {
           if (a.is_pinned && !b.is_pinned) return -1;
           if (!a.is_pinned && b.is_pinned) return 1;
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         });
 
-        setNotes(sortedNotes);
-      } catch (error) {
-        console.error("Failed to fetch kindness notes:", error);
+        setNotes(sorted);
+      } catch (err) {
+        console.error("Failed to fetch kindness notes:", err);
         setNotes([]);
       } finally {
         setLoading(false);
@@ -85,26 +132,68 @@ export function KindnessNotesSection() {
 
     const channel = supabase
       .channel("kindness_notes_realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "kindness_notes" },
-        () => {
-          void fetchNotes();
-        },
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "kindness_notes" }, () => {
+        void fetchNotes();
+      })
       .subscribe();
 
-    return () => {
-      void supabase.removeChannel(channel);
-    };
+    return () => { void supabase.removeChannel(channel); };
   }, []);
+
+  const handleLoveToggle = useCallback(async (note: KindnessNote) => {
+    const isLiked = likedNotes.has(note.id);
+    const delta = isLiked ? -1 : 1;
+
+    setNotes((prev) =>
+      prev.map((n) =>
+        n.id === note.id ? { ...n, love_count: Math.max(0, n.love_count + delta) } : n,
+      ),
+    );
+    setLikedNotes((prev) => {
+      const next = new Set(prev);
+      if (isLiked) next.delete(note.id); else next.add(note.id);
+      try { localStorage.setItem(LIKED_NOTES_KEY, JSON.stringify([...next])); } catch { /* ignore */ }
+      return next;
+    });
+
+    try {
+      const res = await fetch("/api/kindness-notes", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "love", id: note.id, delta }),
+      });
+      if (!res.ok) {
+        setNotes((prev) =>
+          prev.map((n) =>
+            n.id === note.id ? { ...n, love_count: Math.max(0, n.love_count - delta) } : n,
+          ),
+        );
+        setLikedNotes((prev) => {
+          const next = new Set(prev);
+          if (isLiked) next.add(note.id); else next.delete(note.id);
+          try { localStorage.setItem(LIKED_NOTES_KEY, JSON.stringify([...next])); } catch { /* ignore */ }
+          return next;
+        });
+      }
+    } catch {
+      setNotes((prev) =>
+        prev.map((n) =>
+          n.id === note.id ? { ...n, love_count: Math.max(0, n.love_count - delta) } : n,
+        ),
+      );
+      setLikedNotes((prev) => {
+        const next = new Set(prev);
+        if (isLiked) next.add(note.id); else next.delete(note.id);
+        try { localStorage.setItem(LIKED_NOTES_KEY, JSON.stringify([...next])); } catch { /* ignore */ }
+        return next;
+      });
+    }
+  }, [likedNotes]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+    const diffDays = Math.ceil(Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays} days ago`;
@@ -112,25 +201,20 @@ export function KindnessNotesSection() {
     return date.toLocaleDateString();
   };
 
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? notes.length - 1 : prev - 1));
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev === notes.length - 1 ? 0 : prev + 1));
-  };
+  const handlePrevSlide = () => setCurrentSlide((p) => (p === 0 ? notes.length - 1 : p - 1));
+  const handleNextSlide = () => setCurrentSlide((p) => (p === notes.length - 1 ? 0 : p + 1));
 
   return (
-    <section className="relative py-16 overflow-hidden md:py-20 bg-gradient-to-b from-background via-amber-50/30 to-background">
-      {/* Decorative background elements */}
+    <section className="relative overflow-hidden py-16 md:py-20 bg-linear-to-b from-background via-primary/5 to-background">
+      {/* Decorative background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-rose-100/20 rounded-full blur-3xl -mr-48 -mt-48" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-100/20 rounded-full blur-3xl -ml-48 -mb-48" />
+        <div className="absolute -mr-48 -mt-48 top-0 right-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -mb-48 -ml-48 bottom-0 left-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 max-w-4xl">
+      <div className="relative z-10 container mx-auto max-w-4xl px-4">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           <div className="mb-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             <Heart className="h-5 w-5 fill-rose-500 text-rose-500 sm:h-6 sm:w-6" />
             <h2
@@ -144,104 +228,89 @@ export function KindnessNotesSection() {
           <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
             Read the kind words students have left for Sayarma Katrina and Sayar Floyd
           </p>
-          <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+          <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
             <p className="flex items-start justify-center gap-2 text-left sm:text-center">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               Abusive or malicious messages will be taken down immediately. IP addresses are recorded to prevent abuse.
             </p>
-          </div>
-          <div className="mt-8">
-            <LeaveNoteButton />
           </div>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin" />
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
               <p className="text-muted-foreground">Loading messages...</p>
             </div>
           </div>
         ) : notes.length > 0 ? (
           <>
-            {/* Slideshow View */}
             {!isExpanded ? (
+              /* Slideshow */
               <div className="mb-8">
-                {/* Single Message Card with Slideshow */}
                 <div
-                  key={notes[currentSlide].id}
+                  key={notes[currentSlide]?.id}
                   className="group relative"
-                  style={{
-                    animation: `fadeInScale 0.5s ease-out`,
-                  }}
+                  style={{ animation: "fadeInScale 0.5s ease-out" }}
                 >
-                  {/* Background card with border */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-rose-50/50 to-amber-50/50 dark:from-rose-950/20 dark:to-amber-950/20 rounded-2xl border border-rose-200/50 dark:border-rose-900/30 shadow-md group-hover:shadow-lg transition-shadow duration-300" />
+                  <div className="absolute inset-0 rounded-2xl border border-primary/20 bg-linear-to-r from-white/5 to-white/10 shadow-md transition-shadow duration-300 group-hover:shadow-lg" />
 
-                  {/* Content */}
                   <div className="relative p-5 sm:p-8 md:p-10">
-                    {/* Top section with icon and name */}
-                    <div className="flex items-start gap-4 mb-6">
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 shadow-md">
-                          <MessageCircle className="w-6 h-6" />
+                    <div className="mb-6 flex items-start gap-4">
+                      <div className="shrink-0">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary shadow-md">
+                          <MessageCircle className="h-6 w-6" />
                         </div>
                       </div>
 
-                      <div className="flex-grow">
+                      <div className="grow">
                         <h3
                           className="text-lg font-bold text-foreground"
                           style={{ fontFamily: "var(--font-heading)" }}
                         >
-                          {notes[currentSlide].student_name}
+                          {notes[currentSlide]?.student_name}
                         </h3>
                         <time className="text-sm text-muted-foreground">
-                          {formatDate(notes[currentSlide].created_at)}
+                          {notes[currentSlide] ? formatDate(notes[currentSlide].created_at) : ""}
                         </time>
                       </div>
 
-                      {/* Heart badge - filled if pinned, outline if not */}
-                      {notes[currentSlide].is_pinned ? (
-                        <div className="text-rose-500">
-                          <Heart className="w-5 h-5 fill-rose-500" />
-                        </div>
-                      ) : (
-                        <div className="text-muted-foreground/40 group-hover:text-rose-400 transition-colors duration-300">
-                          <Heart className="w-5 h-5" />
-                        </div>
+                      {notes[currentSlide] && (
+                        <LoveButton
+                          note={notes[currentSlide]}
+                          liked={likedNotes.has(notes[currentSlide].id)}
+                          onToggle={handleLoveToggle}
+                          size="md"
+                        />
                       )}
                     </div>
 
-                    {/* Message */}
-                    <p className="mb-8 flex min-h-[80px] items-center text-base italic leading-relaxed text-foreground sm:min-h-[100px] sm:text-lg">
-                      "{notes[currentSlide].message}"
+                    <p className="mb-8 flex min-h-20 items-center text-base italic leading-relaxed text-foreground sm:min-h-25 sm:text-lg">
+                      &ldquo;{notes[currentSlide]?.message}&rdquo;
                     </p>
 
-                    {/* Navigation Controls */}
-                    <div className="flex items-center justify-between pt-6 border-t border-rose-200/30 dark:border-rose-900/20">
+                    <div className="flex items-center justify-between border-t border-primary/20 pt-6">
                       <button
                         onClick={handlePrevSlide}
-                        className="p-2 hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded-lg transition-colors duration-200"
+                        className="rounded-lg p-2 transition-colors duration-200 hover:bg-primary/10"
                         aria-label="Previous message"
                       >
-                        <ChevronLeft className="w-6 h-6 text-rose-600 dark:text-rose-400" />
+                        <ChevronLeft className="h-6 w-6 text-primary" />
                       </button>
 
-                      {/* Slide indicator */}
                       <div className="text-center">
                         <p className="text-sm font-medium text-muted-foreground">
                           {currentSlide + 1} / {notes.length}
                         </p>
-                        <div className="flex gap-1 justify-center mt-2">
+                        <div className="mt-2 flex justify-center gap-1">
                           {notes.map((_, index) => (
                             <button
                               key={index}
                               onClick={() => setCurrentSlide(index)}
-                              className={`h-2 rounded-full transition-all duration-300 ${
-                                index === currentSlide
-                                  ? "bg-rose-500 w-6"
-                                  : "bg-rose-200 dark:bg-rose-900/30 w-2 hover:bg-rose-300"
-                              }`}
+                              className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
+                                  ? "w-6 bg-primary"
+                                  : "w-2 bg-primary/20 hover:bg-primary/40"
+                                }`}
                               aria-label={`Go to message ${index + 1}`}
                             />
                           ))}
@@ -250,68 +319,59 @@ export function KindnessNotesSection() {
 
                       <button
                         onClick={handleNextSlide}
-                        className="p-2 hover:bg-rose-100 dark:hover:bg-rose-900/30 rounded-lg transition-colors duration-200"
+                        className="rounded-lg p-2 transition-colors duration-200 hover:bg-primary/10"
                         aria-label="Next message"
                       >
-                        <ChevronRight className="w-6 h-6 text-rose-600 dark:text-rose-400" />
+                        <ChevronRight className="h-6 w-6 text-primary" />
                       </button>
                     </div>
                   </div>
 
-                  {/* Left border accent */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-rose-500 to-amber-500 rounded-l-2xl group-hover:w-1.5 transition-all duration-300" />
+                  <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-2xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-1.5" />
                 </div>
 
-                {/* See More Button */}
-                <div className="flex justify-center mt-8">
+                <div className="mt-8 flex justify-center">
                   <button
                     onClick={() => setIsExpanded(true)}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-rose-100 hover:bg-rose-200 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 rounded-full font-semibold transition-all duration-200"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 font-semibold text-primary transition-all duration-200 hover:bg-primary/20"
                   >
                     See All Messages
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className="h-4 w-4" />
                   </button>
                 </div>
               </div>
             ) : (
-              /* Expanded View - Show All Messages */
+              /* Expanded — all messages */
               <div className="mb-8">
-                {/* See Less Button */}
-                <div className="flex justify-center mb-6">
+                <div className="mb-6 flex justify-center">
                   <button
                     onClick={() => setIsExpanded(false)}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-rose-100 hover:bg-rose-200 dark:bg-rose-900/30 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 rounded-full font-semibold transition-all duration-200"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 font-semibold text-primary transition-all duration-200 hover:bg-primary/20"
                   >
                     Show Slideshow
-                    <ChevronUp className="w-4 h-4" />
+                    <ChevronUp className="h-4 w-4" />
                   </button>
                 </div>
 
-                {/* All Messages Grid */}
                 <div className="space-y-4">
                   {notes.map((note, index) => (
                     <div
                       key={note.id}
                       className="group relative"
-                      style={{
-                        animation: `slideInUp 0.5s ease-out ${index * 0.1}s both`,
-                      }}
+                      style={{ animation: `slideInUp 0.5s ease-out ${index * 0.1}s both` }}
                     >
-                      {/* Background card with border */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-rose-50/50 to-amber-50/50 dark:from-rose-950/20 dark:to-amber-950/20 rounded-xl border border-rose-200/50 dark:border-rose-900/30 shadow-sm group-hover:shadow-md transition-shadow duration-300" />
+                      <div className="absolute inset-0 rounded-xl border border-primary/20 bg-linear-to-r from-primary/5 to-primary/10 shadow-sm transition-shadow duration-300 group-hover:shadow-md" />
 
-                      {/* Content */}
                       <div className="relative p-6">
-                        {/* Top section with icon and name */}
-                        <div className="flex items-start gap-4 mb-3">
-                          <div className="flex-shrink-0 mt-1">
-                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 shadow-md">
-                              <MessageCircle className="w-5 h-5" />
+                        <div className="mb-3 flex items-start gap-4">
+                          <div className="mt-1 shrink-0">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-md">
+                              <MessageCircle className="h-5 w-5" />
                             </div>
                           </div>
 
-                          <div className="flex-grow">
-                            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                          <div className="grow">
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
                               <h3
                                 className="text-sm font-bold text-foreground"
                                 style={{ fontFamily: "var(--font-heading)" }}
@@ -324,33 +384,26 @@ export function KindnessNotesSection() {
                             </div>
                           </div>
 
-                          {/* Heart badge - filled if pinned, outline if not */}
-                          {note.is_pinned ? (
-                            <div className="text-rose-500">
-                              <Heart className="w-4 h-4 fill-rose-500" />
-                            </div>
-                          ) : (
-                            <div className="text-muted-foreground/40 group-hover:text-rose-400 transition-colors duration-300">
-                              <Heart className="w-4 h-4" />
-                            </div>
-                          )}
+                          <LoveButton
+                            note={note}
+                            liked={likedNotes.has(note.id)}
+                            onToggle={handleLoveToggle}
+                            size="sm"
+                          />
                         </div>
 
-                        {/* Message */}
                         <p className="py-1 pl-0 text-base leading-relaxed text-foreground sm:pl-14">
-                          "{note.message}"
+                          &ldquo;{note.message}&rdquo;
                         </p>
                       </div>
 
-                      {/* Left border accent */}
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-rose-500 to-amber-500 rounded-l-xl group-hover:w-1.5 transition-all duration-300" />
+                      <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-1.5" />
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Call to action */}
             <div className="mt-12 text-center">
               <p className="mb-4 text-muted-foreground">Want to leave a message of your own?</p>
               <LeaveNoteButton />
@@ -366,31 +419,6 @@ export function KindnessNotesSection() {
           </div>
         )}
       </div>
-
-      {/* Animation styles */}
-      <style jsx>{`
-        @keyframes slideInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </section>
   );
 }

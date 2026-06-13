@@ -2,13 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ImagePreviewDialog, type ImagePreviewItem } from "@/components/image-preview-dialog";
 
 const spaces = [
   {
@@ -59,10 +53,15 @@ const spaces = [
   },
 ];
 
+const previewItems: ImagePreviewItem[] = spaces.map((s) => ({
+  src: s.src,
+  alt: s.title,
+  title: s.title,
+  description: s.blurb,
+}));
+
 export function HarborDesignShowcase() {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const preview =
-    previewIndex !== null && previewIndex >= 0 ? spaces[previewIndex] ?? null : null;
 
   return (
     <section className="bg-background py-20 sm:py-28">
@@ -105,38 +104,14 @@ export function HarborDesignShowcase() {
           ))}
         </div>
 
-        <Dialog
+        <ImagePreviewDialog
+          item={previewIndex !== null ? previewItems[previewIndex] ?? null : null}
           open={previewIndex !== null}
-          onOpenChange={(open) => {
-            if (!open) {
-              setPreviewIndex(null);
-            }
-          }}
-        >
-          <DialogContent className="max-h-[calc(100dvh-3rem)] w-[calc(100%-1.25rem)] max-w-5xl overflow-hidden p-0 gap-0 sm:p-0">
-            {preview && (
-              <>
-                <DialogHeader className="gap-2 border-b border-border bg-muted/30 px-5 py-4 text-left">
-                  <DialogTitle style={{ fontFamily: "var(--font-heading)" }} className="text-xl sm:text-2xl">
-                    {preview.title}
-                  </DialogTitle>
-                  <DialogDescription className="text-sm sm:text-base">
-                    {preview.blurb}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="relative w-full aspect-video max-h-[75dvh] bg-black">
-                  <Image
-                    src={preview.src}
-                    alt={preview.title}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 1024px) 100vw, 1024px"
-                  />
-                </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+          onOpenChange={(open) => { if (!open) setPreviewIndex(null); }}
+          items={previewItems}
+          currentIndex={previewIndex ?? 0}
+          onNavigate={setPreviewIndex}
+        />
       </div>
     </section>
   );

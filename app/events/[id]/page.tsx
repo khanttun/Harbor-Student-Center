@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Cake, CalendarDays, Drumstick, Expand, PartyPopper, Pizza } from "lucide-react";
@@ -61,6 +62,15 @@ function getCategoryIcon(category: ReturnType<typeof getEventCategory>) {
     return PartyPopper;
 }
 
+function CategoryBadge({ category }: { category: ReturnType<typeof getEventCategory> }) {
+    return (
+        <div className="absolute bottom-6 left-6 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-semibold text-foreground shadow-sm">
+            {createElement(getCategoryIcon(category), { className: "h-4 w-4" })}
+            {CATEGORY_LABELS[category]}
+        </div>
+    );
+}
+
 type EventDetailPageProps = {
     params: Promise<{
         id: string;
@@ -82,7 +92,6 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
     const event = data as EventRecord;
     const category = getEventCategory(event);
-    const Icon = getCategoryIcon(category);
 
     return (
         <main className="min-h-screen bg-background">
@@ -101,12 +110,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
                             alt={event.title}
                             title={event.title}
                             description={event.description}
-                            badge={
-                                <div className="absolute bottom-6 left-6 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-sm font-semibold text-foreground shadow-sm">
-                                    <Icon className="h-4 w-4" />
-                                    {CATEGORY_LABELS[category]}
-                                </div>
-                            }
+                            badge={<CategoryBadge category={category} />}
                         />
                     )}
 
