@@ -137,7 +137,7 @@ export function ThankYouForm() {
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
               <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-6 w-full max-w-xs border border-zinc-200 dark:border-zinc-800 relative">
                 <h3 className="text-lg font-bold mb-2">Community Passcode</h3>
-                <p className="text-sm mb-4">What is the name of Sayarma Katrina and Sayar Floyd's pet? (Case-insensitive, include spaces.)</p>
+                <p className="text-sm mb-4">What is the name of Sayarma Katrina and Sayar Floyd&apos;s pet? (Case-insensitive, include spaces.)</p>
                 <div className="space-y-3">
                   <input
                     type="text"

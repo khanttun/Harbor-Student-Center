@@ -2,15 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Cake, ChevronLeft, ChevronRight, Drumstick, PartyPopper, Pizza } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Cake, ChevronLeft, ChevronRight, Drumstick, Maximize2, PartyPopper, Pizza, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { EventShareButton } from "@/components/event-share-button";
 
 export type EventCardRecord = {
@@ -90,6 +88,7 @@ type UpcomingEventsGridProps = {
 };
 
 export function UpcomingEventsGrid({ events }: UpcomingEventsGridProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -150,7 +149,7 @@ export function UpcomingEventsGrid({ events }: UpcomingEventsGridProps) {
               }}
             >
               {event.image_url && (
-                <div className="relative h-48 overflow-hidden pointer-events-none">
+                <div className="relative aspect-210/297 overflow-hidden pointer-events-none">
                   <Image
                     src={event.image_url}
                     alt=""
@@ -200,89 +199,116 @@ export function UpcomingEventsGrid({ events }: UpcomingEventsGridProps) {
       </div>
 
       <Dialog open={viewerOpen && !!active} onOpenChange={setViewerOpen}>
-        <DialogContent className="max-h-[calc(100dvh-3rem)] w-[calc(100%-1.25rem)] max-w-4xl overflow-y-auto p-0 gap-0 sm:p-0">
+        <DialogContent
+          showCloseButton={false}
+          className="max-h-[calc(100dvh-2rem)] w-[calc(100%-1.25rem)] max-w-4xl overflow-hidden rounded-2xl border-0 bg-black p-0 shadow-2xl gap-0 sm:p-0"
+        >
           {active && (
-            <>
-              <DialogHeader className="gap-3 border-b border-border bg-muted/30 px-5 py-4 text-left">
-                <div className="flex flex-wrap items-start justify-between gap-2 gap-y-3">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                    {(() => {
-                      const previewCategory = getEventCategory(active);
-                      const PreviewIcon = getCategoryIcon(previewCategory);
-                      return (
-                        <>
-                          <PreviewIcon className="h-4 w-4 shrink-0" aria-hidden />
-                          {CATEGORY_LABELS[previewCategory]}
-                        </>
-                      );
-                    })()}
-                  </span>
-                </div>
-                <DialogTitle style={{ fontFamily: "var(--font-heading)" }} className="text-xl sm:text-2xl">
-                  {active.title}
-                </DialogTitle>
-                <p className="text-sm font-medium text-foreground">{formatDialogDate(active.date)}</p>
-                <DialogDescription className={(active.description ?? "").trim() ? "text-base whitespace-pre-line" : "sr-only"}>
-                  {(active.description ?? "").trim()
-                    ? active.description
-                    : "Event details. Use arrow keys or buttons to browse events."}
-                </DialogDescription>
-              </DialogHeader>
+            <div ref={containerRef} className="flex flex-col">
+              <DialogPrimitive.Title className="sr-only">{active.title}</DialogPrimitive.Title>
+              <DialogPrimitive.Description className="sr-only">
+                {active.description || "Event details."}
+              </DialogPrimitive.Description>
 
-              <div className="relative bg-black/90 px-2 pt-12 pb-14 sm:px-4 sm:pt-12 sm:pb-16">
-                {count > 1 ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        goPrev();
-                      }}
-                      aria-label="Previous event"
-                      className="absolute left-2 top-1/2 z-10 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/75 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60 sm:left-4 sm:size-12"
-                    >
-                      <ChevronLeft className="size-6" aria-hidden />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        goNext();
-                      }}
-                      aria-label="Next event"
-                      className="absolute right-2 top-1/2 z-10 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/75 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60 sm:right-4 sm:size-12"
-                    >
-                      <ChevronRight className="size-6" aria-hidden />
-                    </button>
-                  </>
-                ) : null}
+              {/* Close */}
+              <DialogPrimitive.Close
+                className="absolute right-3 top-3 z-30 inline-flex size-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-white/20 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/50"
+                aria-label="Close"
+              >
+                <X className="size-4" aria-hidden />
+              </DialogPrimitive.Close>
+
+              {/* Image area */}
+              <div className="relative min-h-50 w-full bg-black">
                 {active.image_url ? (
-                  <div className="relative mx-auto aspect-video w-full max-h-[min(70dvh,480px)]">
+                  <div className="relative aspect-video w-full max-h-[55dvh]">
                     <Image
                       src={active.image_url}
                       alt=""
                       fill
-                      className="rounded-md object-contain"
+                      className="object-contain"
                       sizes="(max-width: 896px) 100vw, 896px"
                     />
                   </div>
                 ) : (
-                  <div className="flex min-h-[200px] items-center justify-center rounded-md border border-dashed border-white/20 bg-black/40 px-4 text-center text-sm text-white/70">
+                  <div className="flex min-h-50 items-center justify-center border border-dashed border-white/20 px-4 text-center text-sm text-white/50">
                     No image for this event
                   </div>
                 )}
+
+                {/* Nav arrows */}
+                {count > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                      aria-label="Previous event"
+                      className="absolute left-3 top-1/2 z-20 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/80 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60 sm:left-4"
+                    >
+                      <ChevronLeft className="size-5" aria-hidden />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); goNext(); }}
+                      aria-label="Next event"
+                      className="absolute right-3 top-1/2 z-20 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/80 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60 sm:right-4"
+                    >
+                      <ChevronRight className="size-5" aria-hidden />
+                    </button>
+                    <p className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                      {activeIndex + 1} / {count}
+                    </p>
+                  </>
+                )}
+
+                {/* Fullscreen */}
+                <button
+                  type="button"
+                  onClick={() => containerRef.current?.requestFullscreen?.()}
+                  aria-label="View fullscreen"
+                  className="absolute bottom-3 right-3 z-20 inline-flex size-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/80 focus-visible:outline focus-visible:ring-2 focus-visible:ring-white/60"
+                >
+                  <Maximize2 className="size-4" aria-hidden />
+                </button>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/20 px-5 py-4">
+              {/* Info panel */}
+              <div className="border-t border-white/10 bg-zinc-900 px-5 py-4">
+                {(() => {
+                  const previewCategory = getEventCategory(active);
+                  const PreviewIcon = getCategoryIcon(previewCategory);
+                  return (
+                    <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary">
+                      <PreviewIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {CATEGORY_LABELS[previewCategory]}
+                    </span>
+                  );
+                })()}
+                <p
+                  style={{ fontFamily: "var(--font-heading)" }}
+                  className="text-base font-semibold text-white sm:text-lg"
+                >
+                  {active.title}
+                </p>
+                <p className="mt-1 text-xs font-medium text-white/50">{formatDialogDate(active.date)}</p>
+                {(active.description ?? "").trim() && (
+                  <p className="mt-2 text-sm leading-relaxed text-white/60 whitespace-pre-line line-clamp-3">
+                    {active.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 bg-zinc-900/80 px-5 py-3">
                 <Link
                   href={`/events/${active.id}`}
-                  className="inline-flex text-sm font-semibold text-primary hover:underline"
+                  className="text-sm font-semibold text-primary hover:underline"
                 >
                   Open full details
                 </Link>
                 <EventShareButton title={active.title} />
               </div>
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>

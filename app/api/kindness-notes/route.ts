@@ -183,10 +183,60 @@ export async function POST(request: Request) {
   }
 }
 
+async function handleLoveReaction(body: Record<string, unknown>) {
+  const noteId = typeof body.id === "string" ? body.id.trim() : "";
+
+  if (!noteId) {
+    return NextResponse.json({ error: "Missing note ID" }, { status: 400 });
+  }
+
+  const delta = body.delta === -1 ? -1 : 1;
+
+  try {
+    const supabase = await createClient();
+
+    const { data: note, error: fetchError } = await supabase
+      .from("kindness_notes")
+      .select("love_count")
+      .eq("id", noteId)
+      .single();
+
+    if (fetchError || !note) {
+      return NextResponse.json({ error: "Note not found." }, { status: 404 });
+    }
+
+    const newCount = Math.max(0, ((note.love_count as number) ?? 0) + delta);
+
+    const { error: updateError } = await supabase
+      .from("kindness_notes")
+      .update({ love_count: newCount })
+      .eq("id", noteId);
+
+    if (updateError) {
+      if (updateError.message.includes("love_count")) {
+        return NextResponse.json({ error: "love_count column not found. Run LOVE_REACTIONS_SETUP.sql first." }, { status: 501 });
+      }
+      return NextResponse.json({ error: "Failed to update reaction." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, love_count: newCount });
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+}
+
 export async function PUT(request: Request) {
   return handleTogglePinned(request);
 }
 
 export async function PATCH(request: Request) {
-  return handleTogglePinned(request);
+  try {
+    const body = await request.json() as Record<string, unknown>;
+    if (body.action === "love") {
+      return handleLoveReaction(body);
+    }
+    return handleTogglePinned(request);
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
 }

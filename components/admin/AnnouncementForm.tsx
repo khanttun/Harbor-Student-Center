@@ -34,10 +34,6 @@ export default function AnnouncementForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    void loadAnnouncements();
-  }, []);
-
   async function loadAnnouncements() {
     const { data, error } = await supabase
       .from("announcements")
@@ -51,6 +47,11 @@ export default function AnnouncementForm() {
 
     setAnnouncements((data as AnnouncementRecord[]) ?? []);
   }
+
+  useEffect(() => {
+    void loadAnnouncements();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function resetForm() {
     setTitle("");

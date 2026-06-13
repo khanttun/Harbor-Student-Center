@@ -44,7 +44,11 @@ function isActivePath(pathname: string, href: string) {
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,33 +62,32 @@ export function Navbar() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOpen(false)
   }, [pathname])
 
   useEffect(() => {
-    if (!isOpen) {
-      document.body.style.overflow = ""
-      return
-    }
-
-    document.body.style.overflow = "hidden"
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsOpen(false)
       }
     }
 
-    window.addEventListener("keydown", handleKeyDown)
+    if (isOpen) {
+      document.documentElement.style.overflow = "hidden"
+      window.addEventListener("keydown", handleKeyDown)
+    } else {
+      document.documentElement.style.overflow = ""
+    }
 
     return () => {
-      document.body.style.overflow = ""
+      document.documentElement.style.overflow = ""
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [isOpen])
 
   const renderNavLink = ({ href, label }: (typeof navLinks)[number], mobile = false) => {
-    const isActive = isActivePath(pathname, href)
+    const isActive = mounted && isActivePath(pathname, href)
 
     return (
       <Link

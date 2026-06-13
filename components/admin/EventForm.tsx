@@ -67,10 +67,6 @@ export default function EventForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    void loadEvents();
-  }, []);
-
   async function loadEvents() {
     const { data, error } = await supabase
       .from("events")
@@ -87,6 +83,11 @@ export default function EventForm() {
       setIsBootstrapped(true);
     }
   }
+
+  useEffect(() => {
+    void loadEvents();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function resetForm() {
     setTitle("");

@@ -37,25 +37,6 @@ export default function KindnessNotesForm() {
   const [replyText, setReplyText] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    void loadNotes();
-
-    const channel = supabase
-      .channel("admin_kindness_notes_realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "kindness_notes" },
-        () => {
-          void loadNotes();
-        },
-      )
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-  }, []);
-
   async function loadNotes() {
     const { data, error } = await supabase
       .from("kindness_notes")
@@ -70,6 +51,22 @@ export default function KindnessNotesForm() {
 
     setLoading(false);
   }
+
+  useEffect(() => {
+    void loadNotes();
+
+    const channel = supabase
+      .channel("admin_kindness_notes_realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "kindness_notes" },
+        () => { void loadNotes(); },
+      )
+      .subscribe();
+
+    return () => { void supabase.removeChannel(channel); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleDelete(noteId: string, studentName: string) {
     const confirmed = window.confirm(
