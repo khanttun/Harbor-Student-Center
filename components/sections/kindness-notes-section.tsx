@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, MessageCircle, ShieldAlert } from "lucide-react";
+import { Heart, MessageCircle, ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -74,6 +74,7 @@ function LoveButton({
 export function KindnessNotesSection() {
   const [notes, setNotes] = useState<KindnessNote[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [likedNotes, setLikedNotes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -289,6 +290,70 @@ export function KindnessNotesSection() {
                 <div className="absolute bottom-0 left-0 top-0 w-1.5 rounded-l-2xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-2" />
               </div>
             </div>
+
+            {/* See All Messages toggle */}
+            {notes.filter((n) => !n.is_pinned).length > 0 && (
+              <div className="mb-8">
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setIsExpanded((v) => !v)}
+                    className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 font-semibold text-primary transition-all duration-200 hover:bg-primary/20"
+                  >
+                    {isExpanded ? (
+                      <>Hide Messages <ChevronUp className="h-4 w-4" /></>
+                    ) : (
+                      <>See All Messages <ChevronDown className="h-4 w-4" /></>
+                    )}
+                  </button>
+                </div>
+
+                {isExpanded && (
+                  <div className="mt-6 space-y-4">
+                    {notes.filter((n) => !n.is_pinned).map((note, index) => (
+                      <div
+                        key={note.id}
+                        className="group relative"
+                        style={{ animation: `slideInUp 0.4s ease-out ${index * 0.07}s both` }}
+                      >
+                        <div className="absolute inset-0 rounded-xl border border-primary/20 bg-linear-to-r from-primary/5 to-primary/10 shadow-sm transition-shadow duration-300 group-hover:shadow-md" />
+                        <div className="relative p-5 sm:p-6">
+                          <div className="mb-3 flex items-start gap-4">
+                            <div className="mt-0.5 shrink-0">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm">
+                                <MessageCircle className="h-5 w-5" />
+                              </div>
+                            </div>
+                            <div className="grow">
+                              <div className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between">
+                                <h3
+                                  className="text-sm font-bold text-foreground"
+                                  style={{ fontFamily: "var(--font-heading)" }}
+                                >
+                                  {note.student_name}
+                                </h3>
+                                <time className="text-xs text-muted-foreground">
+                                  {formatDate(note.created_at)}
+                                </time>
+                              </div>
+                            </div>
+                            <LoveButton
+                              note={note}
+                              liked={likedNotes.has(note.id)}
+                              onToggle={handleLoveToggle}
+                              size="sm"
+                            />
+                          </div>
+                          <p className="pl-0 text-base leading-relaxed text-foreground sm:pl-14">
+                            &ldquo;{note.message}&rdquo;
+                          </p>
+                        </div>
+                        <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-1.5" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mt-12 text-center">
               <p className="mb-4 text-muted-foreground">Want to leave a message of your own?</p>
