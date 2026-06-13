@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, MessageCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ShieldAlert } from "lucide-react";
+import { Heart, MessageCircle, ShieldAlert } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -74,8 +74,6 @@ function LoveButton({
 export function KindnessNotesSection() {
   const [notes, setNotes] = useState<KindnessNote[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [likedNotes, setLikedNotes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -193,7 +191,7 @@ export function KindnessNotesSection() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffDays = Math.ceil(Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays} days ago`;
@@ -201,17 +199,10 @@ export function KindnessNotesSection() {
     return date.toLocaleDateString();
   };
 
-  const handlePrevSlide = () => setCurrentSlide((p) => (p === 0 ? slideshowNotes.length - 1 : p - 1));
-  const handleNextSlide = () => setCurrentSlide((p) => (p === slideshowNotes.length - 1 ? 0 : p + 1));
-
   const pinnedNote = notes.find((n) => n.is_pinned) ?? null;
-  const otherNotes = notes.filter((n) => !n.is_pinned);
-  // When there's a pinned note, slideshow shows only unpinned. Otherwise shows all.
-  const slideshowNotes = pinnedNote ? otherNotes : notes;
 
   return (
     <section className="relative overflow-hidden py-16 md:py-20 bg-linear-to-b from-background via-primary/5 to-background">
-      {/* Decorative background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -mr-48 -mt-48 top-0 right-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute -mb-48 -ml-48 bottom-0 left-0 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
@@ -248,224 +239,56 @@ export function KindnessNotesSection() {
               <p className="text-muted-foreground">Loading messages...</p>
             </div>
           </div>
-        ) : notes.length > 0 ? (
+        ) : pinnedNote ? (
           <>
-            {/* ── Pinned (featured) note ── */}
-            {pinnedNote && (
-              <div className="mb-8">
-                <div className="mb-3 flex items-center justify-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
-                    <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                      <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
-                    </svg>
-                    Featured Message
-                  </span>
-                </div>
-
-                <div className="group relative">
-                  <div className="absolute inset-0 rounded-2xl border-2 border-primary/30 bg-linear-to-r from-primary/5 to-primary/10 shadow-lg transition-shadow duration-300 group-hover:shadow-xl" />
-
-                  <div className="relative p-5 sm:p-8 md:p-10">
-                    <div className="mb-6 flex items-start gap-4">
-                      <div className="shrink-0">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary shadow-md ring-2 ring-primary/20">
-                          <MessageCircle className="h-6 w-6" />
-                        </div>
-                      </div>
-
-                      <div className="grow">
-                        <h3
-                          className="text-lg font-bold text-foreground"
-                          style={{ fontFamily: "var(--font-heading)" }}
-                        >
-                          {pinnedNote.student_name}
-                        </h3>
-                        <time className="text-sm text-muted-foreground">
-                          {formatDate(pinnedNote.created_at)}
-                        </time>
-                      </div>
-
-                      <LoveButton
-                        note={pinnedNote}
-                        liked={likedNotes.has(pinnedNote.id)}
-                        onToggle={handleLoveToggle}
-                        size="md"
-                      />
-                    </div>
-
-                    <p className="mb-4 text-base italic leading-relaxed text-foreground sm:text-lg">
-                      &ldquo;{pinnedNote.message}&rdquo;
-                    </p>
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 top-0 w-1.5 rounded-l-2xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-2" />
-                </div>
+            {/* Featured (pinned) message */}
+            <div className="mb-10">
+              <div className="mb-3 flex items-center justify-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
+                  <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                    <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                  </svg>
+                  Featured Message
+                </span>
               </div>
-            )}
 
-            {/* ── Other messages ── */}
-            {(pinnedNote ? otherNotes : notes).length > 0 && (
-              <>
-                {!isExpanded ? (
-                  /* Slideshow (unpinned notes, or all notes when nothing is pinned) */
-                  <div className="mb-8">
-                    <div
-                      key={slideshowNotes[currentSlide]?.id}
-                      className="group relative"
-                      style={{ animation: "fadeInScale 0.5s ease-out" }}
-                    >
-                      <div className="absolute inset-0 rounded-2xl border border-primary/20 bg-linear-to-r from-white/5 to-white/10 shadow-md transition-shadow duration-300 group-hover:shadow-lg" />
+              <div className="group relative">
+                <div className="absolute inset-0 rounded-2xl border-2 border-primary/30 bg-linear-to-r from-primary/5 to-primary/10 shadow-lg transition-shadow duration-300 group-hover:shadow-xl" />
 
-                      <div className="relative p-5 sm:p-8 md:p-10">
-                        <div className="mb-6 flex items-start gap-4">
-                          <div className="shrink-0">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary shadow-md">
-                              <MessageCircle className="h-6 w-6" />
-                            </div>
-                          </div>
-
-                          <div className="grow">
-                            <h3
-                              className="text-lg font-bold text-foreground"
-                              style={{ fontFamily: "var(--font-heading)" }}
-                            >
-                              {slideshowNotes[currentSlide]?.student_name}
-                            </h3>
-                            <time className="text-sm text-muted-foreground">
-                              {slideshowNotes[currentSlide] ? formatDate(slideshowNotes[currentSlide].created_at) : ""}
-                            </time>
-                          </div>
-
-                          {slideshowNotes[currentSlide] && (
-                            <LoveButton
-                              note={slideshowNotes[currentSlide]}
-                              liked={likedNotes.has(slideshowNotes[currentSlide].id)}
-                              onToggle={handleLoveToggle}
-                              size="md"
-                            />
-                          )}
-                        </div>
-
-                        <p className="mb-8 flex min-h-20 items-center text-base italic leading-relaxed text-foreground sm:min-h-25 sm:text-lg">
-                          &ldquo;{slideshowNotes[currentSlide]?.message}&rdquo;
-                        </p>
-
-                        <div className="flex items-center justify-between border-t border-primary/20 pt-6">
-                          <button
-                            onClick={handlePrevSlide}
-                            className="rounded-lg p-2 transition-colors duration-200 hover:bg-primary/10"
-                            aria-label="Previous message"
-                          >
-                            <ChevronLeft className="h-6 w-6 text-primary" />
-                          </button>
-
-                          <div className="text-center">
-                            <p className="text-sm font-medium text-muted-foreground">
-                              {currentSlide + 1} / {slideshowNotes.length}
-                            </p>
-                            <div className="mt-2 flex justify-center gap-1">
-                              {slideshowNotes.map((_, index) => (
-                                <button
-                                  key={index}
-                                  onClick={() => setCurrentSlide(index)}
-                                  className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                                      ? "w-6 bg-primary"
-                                      : "w-2 bg-primary/20 hover:bg-primary/40"
-                                    }`}
-                                  aria-label={`Go to message ${index + 1}`}
-                                />
-                              ))}
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={handleNextSlide}
-                            className="rounded-lg p-2 transition-colors duration-200 hover:bg-primary/10"
-                            aria-label="Next message"
-                          >
-                            <ChevronRight className="h-6 w-6 text-primary" />
-                          </button>
-                        </div>
+                <div className="relative p-5 sm:p-8 md:p-10">
+                  <div className="mb-6 flex items-start gap-4">
+                    <div className="shrink-0">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20 text-primary shadow-md ring-2 ring-primary/20">
+                        <MessageCircle className="h-6 w-6" />
                       </div>
-
-                      <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-2xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-1.5" />
                     </div>
-
-                    <div className="mt-8 flex justify-center">
-                      <button
-                        onClick={() => setIsExpanded(true)}
-                        className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 font-semibold text-primary transition-all duration-200 hover:bg-primary/20"
+                    <div className="grow">
+                      <h3
+                        className="text-lg font-bold text-foreground"
+                        style={{ fontFamily: "var(--font-heading)" }}
                       >
-                        See All Messages
-                        <ChevronDown className="h-4 w-4" />
-                      </button>
+                        {pinnedNote.student_name}
+                      </h3>
+                      <time className="text-sm text-muted-foreground">
+                        {formatDate(pinnedNote.created_at)}
+                      </time>
                     </div>
+                    <LoveButton
+                      note={pinnedNote}
+                      liked={likedNotes.has(pinnedNote.id)}
+                      onToggle={handleLoveToggle}
+                      size="md"
+                    />
                   </div>
-                ) : (
-                  /* Expanded — all other messages */
-                  <div className="mb-8">
-                    <div className="mb-6 flex justify-center">
-                      <button
-                        onClick={() => setIsExpanded(false)}
-                        className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-6 py-3 font-semibold text-primary transition-all duration-200 hover:bg-primary/20"
-                      >
-                        Show Slideshow
-                        <ChevronUp className="h-4 w-4" />
-                      </button>
-                    </div>
 
-                    <div className="space-y-4">
-                      {(pinnedNote ? otherNotes : notes).map((note, index) => (
-                        <div
-                          key={note.id}
-                          className="group relative"
-                          style={{ animation: `slideInUp 0.5s ease-out ${index * 0.1}s both` }}
-                        >
-                          <div className="absolute inset-0 rounded-xl border border-primary/20 bg-linear-to-r from-primary/5 to-primary/10 shadow-sm transition-shadow duration-300 group-hover:shadow-md" />
+                  <p className="text-base italic leading-relaxed text-foreground sm:text-lg">
+                    &ldquo;{pinnedNote.message}&rdquo;
+                  </p>
+                </div>
 
-                          <div className="relative p-6">
-                            <div className="mb-3 flex items-start gap-4">
-                              <div className="mt-1 shrink-0">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-md">
-                                  <MessageCircle className="h-5 w-5" />
-                                </div>
-                              </div>
-
-                              <div className="grow">
-                                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                                  <h3
-                                    className="text-sm font-bold text-foreground"
-                                    style={{ fontFamily: "var(--font-heading)" }}
-                                  >
-                                    {note.student_name}
-                                  </h3>
-                                  <time className="text-xs text-muted-foreground">
-                                    {formatDate(note.created_at)}
-                                  </time>
-                                </div>
-                              </div>
-
-                              <LoveButton
-                                note={note}
-                                liked={likedNotes.has(note.id)}
-                                onToggle={handleLoveToggle}
-                                size="sm"
-                              />
-                            </div>
-
-                            <p className="py-1 pl-0 text-base leading-relaxed text-foreground sm:pl-14">
-                              &ldquo;{note.message}&rdquo;
-                            </p>
-                          </div>
-
-                          <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-1.5" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+                <div className="absolute bottom-0 left-0 top-0 w-1.5 rounded-l-2xl bg-linear-to-b from-primary to-primary/50 transition-all duration-300 group-hover:w-2" />
+              </div>
+            </div>
 
             <div className="mt-12 text-center">
               <p className="mb-4 text-muted-foreground">Want to leave a message of your own?</p>
@@ -476,7 +299,7 @@ export function KindnessNotesSection() {
           <div className="px-6 py-12 text-center">
             <MessageCircle className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
             <p className="mb-6 text-lg text-muted-foreground">
-              No messages yet. Be the first to share your appreciation!
+              No featured message yet. Check back soon!
             </p>
             <LeaveNoteButton />
           </div>

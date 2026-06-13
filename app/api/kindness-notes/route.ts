@@ -68,10 +68,23 @@ async function handleTogglePinned(request: Request) {
       return NextResponse.json({ error: "Note not found." }, { status: 404 });
     }
 
-    // 2. Toggle the pinned state
+    // 2. Determine next state
     const nextPinnedState = !note.is_pinned;
 
-    // 3. Update the database row
+    // 3. If pinning: unpin every other note first (only one pin allowed)
+    if (nextPinnedState) {
+      const { error: unpinError } = await adminSupabase
+        .from("kindness_notes")
+        .update({ is_pinned: false })
+        .neq("id", noteId);
+
+      if (unpinError) {
+        console.error("Failed to clear existing pins:", unpinError.message);
+        return NextResponse.json({ error: "Failed to clear existing pins." }, { status: 500 });
+      }
+    }
+
+    // 4. Set the new pin state on this note
     const { error: updateError } = await adminSupabase
       .from("kindness_notes")
       .update({ is_pinned: nextPinnedState })
