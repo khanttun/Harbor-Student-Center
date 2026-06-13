@@ -26,6 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# SQL files (may contain sensitive schema or setup scripts)
+*.sql
+
 # Editor directories and files
 .vscode/
 .idea/
