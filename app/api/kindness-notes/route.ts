@@ -25,11 +25,15 @@ function getAdminSupabaseClient() {
   const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/$/, "");
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-  if (!serviceRoleKey) {
-    console.warn("⚠️ SUPABASE_SERVICE_ROLE_KEY not configured. Admin operations may fail.");
+  if (!serviceRoleKey || serviceRoleKey === process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.warn("⚠️ SUPABASE_SERVICE_ROLE_KEY is missing or incorrect. Get the service_role key from Supabase Dashboard → Settings → API.");
   }
 
-  return createServiceClient(supabaseUrl, serviceRoleKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "");
+  return createServiceClient(
+    supabaseUrl,
+    serviceRoleKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+    { auth: { autoRefreshToken: false, persistSession: false } },
+  );
 }
 
 async function handleTogglePinned(request: Request) {
@@ -183,6 +187,38 @@ export async function POST(request: Request) {
   }
 }
 
+async function handleEditNote(body: Record<string, unknown>) {
+  const noteId = typeof body.id === "string" ? body.id.trim() : "";
+  const studentName = typeof body.student_name === "string" ? body.student_name.trim() : "";
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+
+  if (!noteId) return NextResponse.json({ error: "Missing note ID" }, { status: 400 });
+  if (!studentName || !message)
+    return NextResponse.json({ error: "Student name and message are required." }, { status: 400 });
+
+  try {
+    const supabase = await createClient();
+    const session = await requireAdminSession(supabase);
+    if (!session) return NextResponse.json({ error: "Admin authentication required." }, { status: 401 });
+
+    const adminSupabase = getAdminSupabaseClient();
+    const { error } = await adminSupabase
+      .from("kindness_notes")
+      .update({ student_name: studentName, message })
+      .eq("id", noteId);
+
+    if (error) {
+      console.error("Failed to edit note:", error.message);
+      return NextResponse.json({ error: "Failed to update note." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Invalid request.";
+    return NextResponse.json({ error: msg }, { status: 400 });
+  }
+}
+
 async function handleLoveReaction(body: Record<string, unknown>) {
   const noteId = typeof body.id === "string" ? body.id.trim() : "";
 
@@ -232,9 +268,8 @@ export async function PUT(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const body = await request.json() as Record<string, unknown>;
-    if (body.action === "love") {
-      return handleLoveReaction(body);
-    }
+    if (body.action === "love") return handleLoveReaction(body);
+    if (body.action === "edit") return handleEditNote(body);
     return handleTogglePinned(request);
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });

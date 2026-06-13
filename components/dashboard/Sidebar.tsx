@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -11,6 +11,7 @@ import {
   LogOut,
   ChevronLeft,
   Menu,
+  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -29,13 +30,14 @@ const Sidebar = ({ mobile = false, onNavigate }: SidebarProps) => {
     { icon: <FileText size={20} />, label: "Memories", href: "/dashboard/memories" },
     { icon: <Users size={20} />, label: "Announcements", href: "/dashboard/announcements" },
     { icon: <Heart size={20} />, label: "Appreciation", href: "/dashboard/appreciation" },
+    { icon: <ShieldCheck size={20} />, label: "Admins", href: "/dashboard/admins" },
   ];
 
   const showLabels = mobile || !isCollapsed;
 
   return (
     <div
-      className={`flex h-full shrink-0 flex-col overflow-hidden bg-white text-sidebar-foreground transition-all duration-300 ${
+      className={`flex h-full shrink-0 flex-col overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 ${
         mobile ? "w-full" : isCollapsed ? "w-20" : "w-64"
       }`}
     >
