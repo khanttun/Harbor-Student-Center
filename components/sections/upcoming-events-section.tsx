@@ -65,7 +65,7 @@ export async function UpcomingEventsSection() {
   const { data, error } = await supabase
     .from("events")
     .select("id,title,date,description,image_url,category")
-    .order("date", { ascending: true });
+    .order("created_at", { ascending: false });
 
   const events = ((data as EventRecord[] | null) ?? []).filter(Boolean);
 

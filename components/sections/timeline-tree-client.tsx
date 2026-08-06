@@ -24,6 +24,16 @@ type TimelineMemoryNodeProps = {
   onPhotoClick: (memory: TimelineMemoryRecord) => void;
 };
 
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+
+function formatMemoryDate(dateString: string) {
+  return dateFormatter.format(new Date(dateString));
+}
+
 function TimelineMemoryNode({
   memory,
   side,
@@ -66,7 +76,7 @@ function TimelineMemoryNode({
         </div>
         <div className="px-3 py-2.5">
           <p className="pointer-events-none text-[11px] font-medium leading-tight text-primary">
-            {new Date(memory.date).toLocaleDateString()}
+            {formatMemoryDate(memory.date)}
           </p>
           <h3
             className="mt-0.5 line-clamp-2 text-sm font-bold leading-snug text-foreground"
@@ -158,7 +168,7 @@ export function TimelineTreeScroll({ timelineItems }: TimelineTreeScrollProps) {
                 className="max-w-[4.5rem] text-center text-[10px] font-semibold text-muted-foreground sm:text-xs"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Start
+                Newest
               </span>
             </div>
 
@@ -177,12 +187,14 @@ export function TimelineTreeScroll({ timelineItems }: TimelineTreeScrollProps) {
             <div
               className={`flex shrink-0 flex-col items-center justify-center gap-1 pl-2 sm:pl-3 ${timelineColumnClass}`}
             >
-              <div className="h-9 w-9 rounded-full border-2 border-dashed border-primary/60 bg-background/80" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-dashed border-primary/60 bg-background/80 text-primary">
+                <TreeDeciduous className="h-5 w-5" />
+              </div>
               <span
                 className="max-w-[4.5rem] text-center text-[10px] font-semibold text-muted-foreground sm:text-xs"
                 style={{ fontFamily: "var(--font-heading)" }}
               >
-                Today
+                Oldest
               </span>
             </div>
           </div>
@@ -202,7 +214,7 @@ export function TimelineTreeScroll({ timelineItems }: TimelineTreeScrollProps) {
         images={focusedImages}
         meta={
           focusedMemory
-            ? `${focusedMemory.year} · ${new Date(focusedMemory.date).toLocaleDateString()}`
+            ? `${focusedMemory.year} · ${formatMemoryDate(focusedMemory.date)}`
             : undefined
         }
       />

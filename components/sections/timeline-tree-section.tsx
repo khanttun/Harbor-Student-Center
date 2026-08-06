@@ -40,7 +40,7 @@ async function getMemoriesFromSupabase(): Promise<MemoriesByYear> {
     const { data, error } = await supabase
       .from("memories")
       .select("*")
-      .order("date", { ascending: true });
+      .order("date", { ascending: false });
 
     if (error) {
       const errorMsg = error.message || JSON.stringify(error);
@@ -90,7 +90,7 @@ export async function TimelineTreeSection() {
   const memoriesByYear = await getMemoriesFromSupabase();
 
   const timelineItems: TimelineEntry[] = Object.entries(memoriesByYear)
-    .sort(([a], [b]) => Number(a) - Number(b))
+    .sort(([a], [b]) => Number(b) - Number(a))
     .flatMap(([year, memories]) =>
       memories.map((m) => ({ ...m, year })),
     );
