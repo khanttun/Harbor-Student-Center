@@ -1,7 +1,6 @@
--- Superseded by supabase/migrations/20260609000100_add_memory_image_urls_array.sql, which
--- is the source of truth going forward.
+-- Ported from supabase/add-memory-image-urls.sql.
+-- Adds multi-photo support to memories, backfilling from the original single image_url.
 
--- Run this in the Supabase SQL editor to support multiple photos per memory.
 alter table public.memories
   add column if not exists image_urls text[] default '{}';
 

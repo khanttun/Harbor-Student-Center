@@ -1,7 +1,6 @@
--- Superseded by supabase/migrations/20260609000200_create_kindness_notes_table.sql, which
--- is the source of truth going forward.
-
--- Run this in the Supabase SQL editor to enable Messages of Appreciation.
+-- Ported from supabase/kindness-notes-setup.sql.
+-- Creates the kindness_notes table (Messages of Appreciation) with public read/insert
+-- and authenticated-only delete, and enables it for Supabase Realtime.
 
 CREATE TABLE IF NOT EXISTS kindness_notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

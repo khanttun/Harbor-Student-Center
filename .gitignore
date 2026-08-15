@@ -28,6 +28,8 @@ pnpm-debug.log*
 
 # SQL files (may contain sensitive schema or setup scripts)
 *.sql
+# ...except versioned migrations, which are the source of truth for schema/RLS
+!supabase/migrations/*.sql
 
 # Editor directories and files
 .vscode/
@@ -37,3 +39,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.swp
+
+# Local build artifacts
+*.tsbuildinfo
