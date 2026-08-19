@@ -9,10 +9,15 @@ import { UpcomingEventSection } from "@/components/sections/upcoming-event-secti
 import { MemoriesSection } from "@/components/sections/memories-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { Announcements } from "@/components/Announcements"
+import { FirstVisitWelcomeDialog } from "@/components/first-visit-welcome-dialog"
+import { getWelcomeContent } from "@/lib/welcome-data"
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { announcement, event } = await getWelcomeContent()
+
   return (
     <AnimatedMain>
+      <FirstVisitWelcomeDialog announcement={announcement} event={event} />
       <Navbar />
       <HeroSection />
 
@@ -24,7 +29,7 @@ export default function HomePage() {
 
         <section className="py-20 sm:py-32 bg-background">
           <div className="container mx-auto px-4 max-w-6xl">
-            <Announcements />
+            <Announcements latestAnnouncement={announcement} />
           </div>
         </section>
 
