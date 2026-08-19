@@ -9,16 +9,16 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
-    <Card className="group relative overflow-hidden border-0 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <CardContent className="relative flex flex-col items-center gap-4 p-5 text-center sm:p-8">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
-          <Icon className="h-8 w-8" />
+    <Card className="relative overflow-hidden transition-all duration-300 border shadow-sm group border-border bg-card hover:-translate-y-1 hover:shadow-md">
+      <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-linear-to-br from-primary/5 to-transparent group-hover:opacity-100" />
+      <CardContent className="relative flex flex-col items-center gap-3 p-5 text-center sm:p-6">
+        <div className="flex items-center justify-center w-12 h-12 transition-colors duration-300 rounded-2xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
+          <Icon className="w-6 h-6" />
         </div>
-        <h3 className="text-xl font-semibold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h3 className="text-lg font-semibold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
           {title}
         </h3>
-        <p className="text-muted-foreground leading-relaxed">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
       </CardContent>

@@ -15,12 +15,12 @@ export type AnnouncementRecord = {
 function isSupabaseConfigured(): boolean {
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
   const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
-  
+
   // Check if using placeholder values or empty
   if (!url || !key || url.includes("your-project") || key === "your-anon-key-here") {
     return false;
   }
-  
+
   return true;
 }
 
@@ -47,17 +47,18 @@ type AnnouncementsProps = {
   latestAnnouncement?: AnnouncementRecord | null;
 };
 
+const CONTENT_PREVIEW_LENGTH = 220;
+
 export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
   const supabase = createClient();
   const [announcement, setAnnouncement] = useState<AnnouncementRecord | null>(latestAnnouncement ?? null);
   const [loading, setLoading] = useState(latestAnnouncement === undefined);
   const [hasError, setHasError] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
-    // Initial state already reflects latestAnnouncement; skip fetch when it was provided by SSR
     if (latestAnnouncement !== undefined) return;
 
-    // Skip fetching if Supabase isn't configured
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!isSupabaseConfigured()) { setLoading(false); return; }
 
@@ -93,7 +94,7 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={containerVariants}
-      className="rounded-3xl border border-border bg-card p-5 shadow-xl sm:p-8"
+      className="p-5 border shadow-xl rounded-3xl border-border bg-card sm:p-8"
     >
       <motion.div variants={itemVariants} className="flex items-center gap-4 mb-8">
         <div className="p-4 bg-primary/10 text-primary rounded-2xl">
@@ -117,23 +118,42 @@ export function Announcements({ latestAnnouncement }: AnnouncementsProps) {
           <motion.div
             variants={itemVariants}
             className="p-6 border rounded-2xl bg-muted/40 border-border"
+            aria-busy="true"
+            aria-label="Loading latest announcement"
           >
-            <p className="text-muted-foreground">Loading latest announcement...</p>
+            <div className="h-3 rounded w-28 animate-pulse bg-muted-foreground/15" />
+            <div className="w-2/3 h-6 mt-3 rounded animate-pulse bg-muted-foreground/15" />
+            <div className="mt-4 space-y-2">
+              <div className="w-full h-4 rounded animate-pulse bg-muted-foreground/10" />
+              <div className="w-5/6 h-4 rounded animate-pulse bg-muted-foreground/10" />
+              <div className="w-2/3 h-4 rounded animate-pulse bg-muted-foreground/10" />
+            </div>
           </motion.div>
         ) : announcement ? (
           <motion.div
             variants={itemVariants}
-            className="p-6 bg-muted/50 rounded-2xl border border-border hover:border-primary/20 transition-colors"
+            className="p-6 transition-colors border bg-muted/50 rounded-2xl border-border hover:border-primary/20"
           >
             <p className="mb-2 text-xs font-semibold tracking-wide uppercase text-primary">
               Posted {new Date(announcement.created_at).toLocaleDateString()}
             </p>
-            <h3 className="font-bold text-xl text-foreground mb-2">
+            <h3 className="mb-2 text-xl font-bold text-foreground">
               {announcement.title}
             </h3>
-            <p className="text-muted-foreground text-base sm:text-lg">
-              {announcement.content}
+            <p className="text-base whitespace-pre-line text-muted-foreground sm:text-lg">
+              {expanded || announcement.content.length <= CONTENT_PREVIEW_LENGTH
+                ? announcement.content
+                : `${announcement.content.slice(0, CONTENT_PREVIEW_LENGTH).trimEnd()}…`}
             </p>
+            {announcement.content.length > CONTENT_PREVIEW_LENGTH && (
+              <button
+                type="button"
+                onClick={() => setExpanded((prev) => !prev)}
+                className="mt-2 text-sm font-semibold rounded text-primary hover:underline focus-visible:outline-2 focus-visible:outline-ring"
+              >
+                {expanded ? "Read less" : "Read more"}
+              </button>
+            )}
           </motion.div>
         ) : (
           <motion.div

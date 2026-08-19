@@ -9,22 +9,22 @@ const features = [
   {
     icon: Calendar,
     title: "Weekly Hangout",
-    description: "Tuesday-Thursday from 3:00-7:00 pm, unless otherwise specified. Our space for you to relax, cook, study, and spend quality time together.",
+    description: "Tue–Thu, 3–7 PM — relax, cook, and study together.",
   },
   {
     icon: UtensilsCrossed,
     title: "Saturday Meals",
-    description: "Every Saturday from 3:00-5:30 pm, we provide free large meals at a local restaurant. Come hungry, leave happy!",
+    description: "Free lunch every Saturday, 3–5:30 PM.",
   },
   {
     icon: PartyPopper,
     title: "Celebrations",
-    description: "From birthday parties to holiday events and special gatherings, we celebrate together as a family.",
+    description: "Birthdays, holidays, and gatherings as a family.",
   },
   {
     icon: Gift,
     title: "Completely Free",
-    description: "Everything we offer is provided at absolutely no cost to students. No strings attached.",
+    description: "No cost, ever — no strings attached.",
   },
 ]
 
@@ -51,19 +51,19 @@ const itemVariants = {
 
 export function WhatWeDoSection() {
   return (
-    <section className="bg-background py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-background sm:py-32">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <SectionHeading
           title="What We Do"
           subtitle="We provide a warm, welcoming space where Myanmar students can find community, food, and friendship."
         />
-        
-        <motion.div 
+
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-6 sm:grid-cols-2"
         >
           {features.map((feature) => (
             <motion.div key={feature.title} variants={itemVariants}>
