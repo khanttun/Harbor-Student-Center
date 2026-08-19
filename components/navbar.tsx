@@ -185,7 +185,7 @@ export function Navbar() {
               animate="visible"
               exit="exit"
               transition={{ duration: 0.25 }}
-              className="pb-6 overflow-hidden border-t border-border md:hidden"
+              className="relative overflow-hidden border-t pb-6 border-border bg-card md:hidden"
             >
               <motion.div
                 className="flex flex-col gap-2 pt-4"
@@ -203,6 +203,23 @@ export function Navbar() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Backdrop dim behind the mobile panel so it reads as a distinct overlay layer */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.button
+            type="button"
+            aria-label="Close menu"
+            tabIndex={-1}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-x-0 bottom-0 top-16 -z-10 bg-black/30 md:hidden sm:top-18"
+          />
+        )}
+      </AnimatePresence>
     </motion.nav>
   )
 }

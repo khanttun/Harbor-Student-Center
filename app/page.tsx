@@ -2,6 +2,7 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { AnimatedMain } from "@/components/animated-main"
 import { HeroSection } from "@/components/sections/hero-section"
+import { QuickInfoBar } from "@/components/sections/quick-info-bar"
 import { MissionSection } from "@/components/sections/mission-section"
 import { WhatWeDoSection } from "@/components/sections/what-we-do-section"
 import { HarborDesignShowcase } from "@/components/sections/harbor-design-showcase"
@@ -20,12 +21,13 @@ export default async function HomePage() {
       <FirstVisitWelcomeDialog announcement={announcement} event={event} />
       <Navbar />
       <HeroSection />
+      <QuickInfoBar />
 
       <div className="relative z-10 bg-background">
+        <UpcomingEventSection />
         <MissionSection />
         <WhatWeDoSection />
         <HarborDesignShowcase />
-        <UpcomingEventSection />
 
         <section className="py-20 sm:py-32 bg-background">
           <div className="container mx-auto px-4 max-w-6xl">

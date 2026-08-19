@@ -3,6 +3,9 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, Facebook, MessageCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+const MESSENGER_GROUP_URL = "https://m.me/ch/AbbgVeO_7EtUQRQp/"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -10,12 +13,11 @@ const navLinks = [
   { href: "/events", label: "Events" },
   { href: "/memories", label: "Memories" },
   { href: "/contact", label: "Contact" },
-  { href: "/login", label: "Admin Setting" },
 ]
 
 const socialLinks = [
   { href: "https://facebook.com", label: "Facebook", icon: Facebook },
-  { href: "https://m.me", label: "Messenger", icon: MessageCircle },
+  { href: MESSENGER_GROUP_URL, label: "Messenger", icon: MessageCircle },
 ]
 
 export function Footer() {
@@ -72,11 +74,23 @@ export function Footer() {
             ))}
           </div>
 
+          {/* Stay Updated */}
+          <div className="flex flex-col items-center gap-2 text-center">
+            <p className="text-sm text-muted-foreground">
+              Want news about events and meals first?
+            </p>
+            <Button asChild size="sm" className="rounded-full">
+              <a href={MESSENGER_GROUP_URL} target="_blank" rel="noopener noreferrer">
+                Stay Updated on Messenger
+              </a>
+            </Button>
+          </div>
+
           {/* Bottom Section */}
           <div className="flex flex-col items-center w-full gap-2 pt-8 border-t border-border/50">
             <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-sm text-muted-foreground">
               <span>Made with</span>
-              <Heart className="h-4 w-4 fill-secondary text-secondary" />
+              <Heart className="w-4 h-4 fill-secondary text-secondary" />
               <span>by</span>
               <Link href="https://khantportfolio.vercel.app/" target="_blank" className="font-bold text-primary">Kent</Link>
               <span>&</span>
