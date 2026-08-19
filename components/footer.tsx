@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, Facebook, MessageCircle } from "lucide-react"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 
 const MESSENGER_GROUP_URL = "https://m.me/ch/AbbgVeO_7EtUQRQp/"
@@ -28,7 +29,13 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       <div className="px-4 py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center gap-8"
+        >
 
           {/* Logo - Stacked Layout */}
           <Link href="/" onClick={handleLogoClick} className="flex flex-col items-center gap-4 text-center group">
@@ -87,7 +94,7 @@ export function Footer() {
           </div>
 
           {/* Bottom Section */}
-          <div className="flex flex-col items-center w-full gap-2 pt-8 border-t border-border/50">
+          <div className="flex flex-col items-center w-full gap-4 pt-8 border-t border-border/50">
             <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-sm text-muted-foreground">
               <span>Made with</span>
               <Heart className="w-4 h-4 fill-secondary text-secondary" />
@@ -97,12 +104,12 @@ export function Footer() {
               <Link href="https://khantnyarkoko.com/" target="_blank" className="font-bold text-primary">Ko Ko</Link>
               <span>for Myanmar students</span>
             </p>
-            <p className="text-xs text-muted-foreground">
+            <Link href="/login" className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} The Harbor Student Center. All rights reserved.
-            </p>
+            </Link>
           </div>
-        </div>
-      </div >
-    </footer >
+        </motion.div>
+      </div>
+    </footer>
   )
 }

@@ -63,7 +63,7 @@ export function HarborDesignShowcase() {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-20 bg-background sm:py-28">
+    <section className="py-24 bg-background sm:py-32">
       <div className="container px-4 mx-auto">
         <div className="max-w-3xl mx-auto mb-10 text-center">
           <p className="mb-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
@@ -78,34 +78,55 @@ export function HarborDesignShowcase() {
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-          {spaces.map((space, index) => (
-            <button
-              key={space.src}
-              type="button"
-              onClick={() => setPreviewIndex(index)}
-              aria-haspopup="dialog"
-              aria-label={`Open space preview: ${space.title}`}
-              className="group relative aspect-square overflow-hidden rounded-2xl border border-border/60 bg-card text-left shadow-sm outline-offset-4 focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <Image
-                src={space.src}
-                alt={space.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 768px) 50vw, 25vw"
-              />
-              {/* Consistent warm scrim across every photo so mixed lighting/color temps read as one system */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/15 to-transparent" />
-              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
-              <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                <h3 className="text-sm font-semibold text-white sm:text-base">{space.title}</h3>
-                <p className="mt-1 text-[11px] text-white/85 sm:text-xs">{space.blurb}</p>
-              </div>
-            </button>
-          ))}
+          {spaces.map((space, index) => {
+            const isFeatured = index === 0
+
+            return (
+              <button
+                key={space.src}
+                type="button"
+                onClick={() => setPreviewIndex(index)}
+                aria-haspopup="dialog"
+                aria-label={`Open space preview: ${space.title}`}
+                className={`relative overflow-hidden text-left border shadow-sm group aspect-square rounded-2xl border-border/60 bg-card outline-offset-4 focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring ${
+                  isFeatured ? "col-span-2 row-span-2" : ""
+                }`}
+              >
+                <Image
+                  src={space.src}
+                  alt={space.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes={
+                    isFeatured
+                      ? "(max-width: 768px) 100vw, 50vw"
+                      : "(max-width: 768px) 50vw, 25vw"
+                  }
+                  priority={isFeatured}
+                />
+                {/* Consistent warm scrim across every photo so mixed lighting/color temps read as one system */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/15 to-transparent" />
+                <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
+                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                  <h3
+                    className={`font-semibold text-white ${isFeatured ? "text-lg sm:text-2xl" : "text-sm sm:text-base"
+                      }`}
+                  >
+                    {space.title}
+                  </h3>
+                  <p
+                    className={`mt-1 text-white/85 ${isFeatured ? "text-sm sm:text-base" : "text-[11px] sm:text-xs"
+                      }`}
+                  >
+                    {space.blurb}
+                  </p>
+                </div>
+              </button>
+            )
+          })}
         </div>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-sm text-center text-muted-foreground">
           Tap any photo to take a tour — swipe through all {spaces.length} spaces →
         </p>
 
