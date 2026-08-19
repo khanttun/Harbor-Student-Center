@@ -114,19 +114,19 @@ export function UpcomingEventSection() {
             <Card className="mb-8 border-0 shadow-lg bg-card">
               <CardContent className="flex flex-col gap-4 p-5 sm:gap-5 sm:p-8">
                 <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-primary/10">
                     <CalendarDays className="w-5 h-5 text-primary" />
                   </div>
                   <span className="text-base font-medium sm:text-lg">Saturday</span>
                 </div>
                 <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-primary/10">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-2xl shrink-0 bg-primary/10">
                     <Clock className="w-5 h-5 text-primary" />
                   </div>
                   <span className="text-base font-medium sm:text-lg">3:00 PM - 5:30 PM</span>
                 </div>
                 <div className="flex items-start gap-3 text-foreground sm:items-center sm:gap-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full shrink-0 bg-primary/10">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-2xl shrink-0 bg-primary/10">
                     <MapPin className="w-5 h-5 text-primary" />
                   </div>
                   <span className="text-base font-medium sm:text-lg">TROIS MONTS Restaurant, Chiang Rai</span>

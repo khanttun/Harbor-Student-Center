@@ -21,28 +21,28 @@ export function CTASection() {
           }}
           className="mb-8 flex justify-center"
         >
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-            <Users className="h-10 w-10 text-white" />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-foreground/20 backdrop-blur-sm">
+            <Users className="h-10 w-10 text-primary-foreground" />
           </div>
         </motion.div>
 
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-6 text-2xl font-bold text-white sm:text-4xl md:text-5xl text-balance"
+          className="mb-6 text-2xl font-bold text-primary-foreground sm:text-4xl md:text-5xl text-balance"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
           You Are Always Welcome Here
         </motion.h2>
-        
-        <motion.p 
+
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-10 text-base text-white/90 leading-relaxed sm:text-xl"
+          className="mb-10 text-base text-primary-foreground/90 leading-relaxed sm:text-xl"
         >
           Whether you want a place to eat, relax, study, or simply feel at home — 
           our doors are always open for you. Come as you are.
@@ -55,18 +55,18 @@ export function CTASection() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
-          <Button 
+          <Button
             asChild
-            size="lg" 
-            className="rounded-full bg-white px-10 py-7 text-lg font-semibold text-primary shadow-xl transition-all hover:bg-white/90 hover:scale-105"
+            size="lg"
+            className="rounded-full bg-primary-foreground px-10 py-7 text-lg font-semibold text-primary shadow-xl transition-all hover:bg-primary-foreground/90 hover:scale-105"
           >
             <Link href="/events">See Events</Link>
           </Button>
-          <Button 
+          <Button
             asChild
-            size="lg" 
+            size="lg"
             variant="outline"
-            className="rounded-full border-white bg-transparent px-10 py-7 text-lg font-semibold text-white transition-all hover:bg-white/10"
+            className="rounded-full border-primary-foreground bg-transparent px-10 py-7 text-lg font-semibold text-primary-foreground transition-all hover:bg-primary-foreground/10"
           >
             <Link href="/contact">Contact Us</Link>
           </Button>
