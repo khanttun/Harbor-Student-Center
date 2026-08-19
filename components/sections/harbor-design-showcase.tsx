@@ -9,7 +9,6 @@ const spaces = [
     src: "/Design/front-room.png",
     title: "Main Lounge",
     blurb: "Comfy seating, soft lighting, and room for everyone to gather.",
-    className: "col-span-2 row-span-2",
   },
   {
     src: "/Design/main-lounge.png",
@@ -64,9 +63,9 @@ export function HarborDesignShowcase() {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   return (
-    <section className="bg-background py-20 sm:py-28">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto mb-10 max-w-3xl text-center">
+    <section className="py-20 bg-background sm:py-28">
+      <div className="container px-4 mx-auto">
+        <div className="max-w-3xl mx-auto mb-10 text-center">
           <p className="mb-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-primary">
             Welcome Home
           </p>
@@ -78,7 +77,7 @@ export function HarborDesignShowcase() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 auto-rows-[120px] gap-2 sm:grid-cols-2 sm:auto-rows-[150px] sm:gap-3 md:grid-cols-4 md:auto-rows-[180px] lg:auto-rows-[200px] lg:gap-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
           {spaces.map((space, index) => (
             <button
               key={space.src}
@@ -86,16 +85,18 @@ export function HarborDesignShowcase() {
               onClick={() => setPreviewIndex(index)}
               aria-haspopup="dialog"
               aria-label={`Open space preview: ${space.title}`}
-              className={`group relative overflow-hidden rounded-2xl border border-border/60 bg-card text-left shadow-sm outline-offset-4 focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring ${space.className ?? ""}`}
+              className="group relative aspect-square overflow-hidden rounded-2xl border border-border/60 bg-card text-left shadow-sm outline-offset-4 focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring"
             >
               <Image
                 src={space.src}
                 alt={space.title}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes={index === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 25vw"}
+                sizes="(max-width: 768px) 50vw, 25vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Consistent warm scrim across every photo so mixed lighting/color temps read as one system */}
+              <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/15 to-transparent" />
+              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
               <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
                 <h3 className="text-sm font-semibold text-white sm:text-base">{space.title}</h3>
                 <p className="mt-1 text-[11px] text-white/85 sm:text-xs">{space.blurb}</p>
@@ -103,6 +104,10 @@ export function HarborDesignShowcase() {
             </button>
           ))}
         </div>
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Tap any photo to take a tour — swipe through all {spaces.length} spaces →
+        </p>
 
         <ImagePreviewDialog
           item={previewIndex !== null ? previewItems[previewIndex] ?? null : null}

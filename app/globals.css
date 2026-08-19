@@ -4,41 +4,40 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* The Harbor Student Center - Warm, Community-Driven Palette */
-  --background: #e6fafd;
-  --foreground: #1f2937;
+  --background: #fbf7f0;
+  --foreground: #1e2a38;
   --card: #ffffff;
-  --card-foreground: #1f2937;
+  --card-foreground: #1e2a38;
   --popover: #ffffff;
-  --popover-foreground: #1f2937;
-  --primary: #0dc0e0;
+  --popover-foreground: #1e2a38;
+  --primary: #03778c;
   --primary-foreground: #ffffff;
   --secondary: #3fd6ee;
-  --secondary-foreground: #ffffff;
-  --muted: #f2fcfe;
-  --muted-foreground: #5e7a87;
-  --accent: #6be3f7;
-  --accent-foreground: #1f2937;
+  --secondary-foreground: #1e2a38;
+  --muted: #f2e9da;
+  --muted-foreground: #4b5d6a;
+  --accent: #e1f1f0;
+  --accent-foreground: #1e2a38;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #3fd6ee;
-  --input: #b6f0fa;
-  --ring: #0dc0e0;
-  --chart-1: #0dc0e0;
+  --border: #e4dcc9;
+  --input: #ede4d3;
+  --ring: #03778c;
+  --chart-1: #03778c;
   --chart-2: #3fd6ee;
   --chart-3: #6be3f7;
   --chart-4: #b6f0fa;
-  --chart-5: #e6fafd;
+  --chart-5: #f2e9da;
   --radius: 1rem;
   --font-heading: var(--font-poppins), "Poppins", system-ui, sans-serif;
-  --sidebar: #e6fafd;
-  --sidebar-foreground: #1f2937;
-  --sidebar-primary: #0dc0e0;
+  --sidebar: #fbf7f0;
+  --sidebar-foreground: #1e2a38;
+  --sidebar-primary: #03778c;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #6be3f7;
-  --sidebar-accent-foreground: #1f2937;
-  --sidebar-border: #3fd6ee;
-  --sidebar-ring: #0dc0e0;
+  --sidebar-accent: #e1f1f0;
+  --sidebar-accent-foreground: #1e2a38;
+  --sidebar-border: #e4dcc9;
+  --sidebar-ring: #03778c;
 }
 
 .dark {
@@ -152,11 +151,23 @@
 }
 
 @keyframes slideInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
