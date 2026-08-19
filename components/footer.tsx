@@ -94,7 +94,7 @@ export function Footer() {
               <span>by</span>
               <Link href="https://khantportfolio.vercel.app/" target="_blank" className="font-bold text-primary">Kent</Link>
               <span>&</span>
-              <Link href="https://khantnyarkoko.vercel.app/" target="_blank" className="font-bold text-primary">Ko Ko</Link>
+              <Link href="https://khantnyarkoko.com/" target="_blank" className="font-bold text-primary">Ko Ko</Link>
               <span>for Myanmar students</span>
             </p>
             <p className="text-xs text-muted-foreground">
